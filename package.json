@@ -1,0 +1,50 @@
+{
+    "name": "item-store",
+    "private": true,
+    "version": "0.0.1",
+    "description": "Store and retrieve items from elasticsearch",
+    "main": "dist/index.js",
+    "scripts": {
+        "prettier": "npx prettier --write .",
+        "lint": "eslint ./src/ --ext .ts",
+        "clean": "rm -rf ./dist/*",
+        "build": "npx tsc",
+        "start": "node ./dist/index.js",
+        "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/jwa-lab/item-store.git"
+    },
+    "keywords": [
+        "JWA",
+        "LAB",
+        "Tokenization",
+        "Service",
+        "ElasticSearch",
+        "item",
+        "store"
+    ],
+    "author": "JWA Lab",
+    "license": "Apache-2.0",
+    "bugs": {
+        "url": "https://github.com/jwa-lab/item-store/issues"
+    },
+    "homepage": "https://github.com/jwa-lab/item-store#readme",
+    "dependencies": {
+        "@elastic/elasticsearch": "^7.11.0",
+        "nats": "^2.0.0-218"
+    },
+    "devDependencies": {
+        "@tsconfig/node14": "^1.0.0",
+        "@types/elasticsearch": "^5.0.37",
+        "@typescript-eslint/eslint-plugin": "^4.15.0",
+        "@typescript-eslint/parser": "^4.15.0",
+        "concurrently": "^5.3.0",
+        "eslint": "^7.20.0",
+        "eslint-config-prettier": "^7.2.0",
+        "nodemon": "^2.0.7",
+        "prettier": "^2.2.1",
+        "typescript": "^4.1.5"
+    }
+}

@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+
+export NATS_URL=nats://localhost:4222
+export ELASTICSEARCH_URI=http://localhost:9200
+export ELASTICSEARCH_INDEX_NAME=jwa_item_store
+
+function start() {
+    node dist/index.js
+}
+
+function dev() {
+    npm run dev
+}
+
+function build() {
+    npm run build
+}
+
+"$@"

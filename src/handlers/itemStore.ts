@@ -7,7 +7,7 @@ import { JSONItem } from "../item";
 
 export const itemStoreHandlers: NatsHandler[] = [
     [
-        "add_item",
+        "item-store_add_item",
         async (subscription: Subscription): Promise<void> => {
             const client = getClient();
 
@@ -47,7 +47,7 @@ export const itemStoreHandlers: NatsHandler[] = [
         }
     ],
     [
-        "get_item",
+        "item-store_get_item",
         async (subscription: Subscription): Promise<void> => {
             const client = getClient();
             for await (const message of subscription) {
@@ -80,7 +80,7 @@ export const itemStoreHandlers: NatsHandler[] = [
         }
     ],
     [
-        "update_item",
+        "item-store_update_item",
         async (subscription: Subscription): Promise<void> => {
             const client = getClient();
 
@@ -98,7 +98,8 @@ export const itemStoreHandlers: NatsHandler[] = [
 
                     console.log(
                         `[ITEM-STORE] Item updated in ${ELASTICSEARCH_INDEX_NAME}`,
-                        data, response
+                        data,
+                        response
                     );
 
                     message.respond(

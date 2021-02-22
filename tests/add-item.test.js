@@ -7,49 +7,49 @@ async function test() {
 
     try {
         let reponse = await natsConnection.request(
-            "add_item",
+            "item-store_add_item",
             jsonCodec.encode({
                 no_update_after: undefined,
                 item_id: 11,
                 data: {
-                    "XP": "100"
+                    XP: "100"
                 },
                 quantity: 1000
             })
         );
 
-        console.log('add item', jsonCodec.decode(reponse.data));
+        console.log("add item", jsonCodec.decode(reponse.data));
 
         reponse = await natsConnection.request(
-            "get_item",
+            "item-store_get_item",
             jsonCodec.encode({
                 item_id: 11
             })
         );
 
-        console.log('get item', jsonCodec.decode(reponse.data));
+        console.log("get item", jsonCodec.decode(reponse.data));
 
         reponse = await natsConnection.request(
-            "update_item",
+            "item-store_update_item",
             jsonCodec.encode({
                 no_update_after: undefined,
                 item_id: 11,
                 data: {
-                    "XP": "80"
+                    XP: "80"
                 }
             })
         );
 
-        console.log('update item', jsonCodec.decode(reponse.data));
+        console.log("update item", jsonCodec.decode(reponse.data));
 
         reponse = await natsConnection.request(
-            "get_item",
+            "item-store_get_item",
             jsonCodec.encode({
                 item_id: 11
             })
         );
 
-        console.log('get item', jsonCodec.decode(reponse.data));
+        console.log("get item", jsonCodec.decode(reponse.data));
     } catch (err) {
         console.error(err);
     }

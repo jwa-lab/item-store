@@ -18,7 +18,9 @@ export async function init(): Promise<void> {
         return;
     }
 
-    console.info(`[ITEM-STORE] connected to ${natsConnection.getServer()}`);
+    console.info(
+        `[ITEM-STORE] Connected to Nats on ${natsConnection.getServer()}`
+    );
 
     (async () => {
         for await (const status of natsConnection.status()) {

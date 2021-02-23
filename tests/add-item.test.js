@@ -21,6 +21,7 @@ describe("Given Item Store is connected to NATS", () => {
                 jsonCodec.encode({
                     no_update_after: undefined,
                     item_id: 11,
+                    name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
                     },
@@ -32,6 +33,7 @@ describe("Given Item Store is connected to NATS", () => {
         it("Then returns the item", () => {
             expect(jsonCodec.decode(response.data).item).toEqual({
                 item_id: 11,
+                name: "Christiano Ronaldo",
                 data: {
                     XP: "100"
                 },
@@ -52,6 +54,7 @@ describe("Given Item Store is connected to NATS", () => {
             it("Then returns the item", () => {
                 expect(jsonCodec.decode(response.data).item).toEqual({
                     item_id: 11,
+                    name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
                     },
@@ -96,6 +99,7 @@ describe("Given Item Store is connected to NATS", () => {
                 it("Then returns the updated item", () => {
                     expect(jsonCodec.decode(response.data).item).toEqual({
                         item_id: 11,
+                        name: "Christiano Ronaldo",
                         data: {
                             XP: "80"
                         },

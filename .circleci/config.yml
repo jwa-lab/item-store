@@ -1,0 +1,27 @@
+version: 2.1
+orbs:
+    node: circleci/node@4.1.1
+jobs:
+    lint:
+        executor: node/default
+        steps:
+            - checkout
+            - run: npm install
+            - run: npm run lint
+    test:
+        machine:
+            image: ubuntu-2004:202010-01
+        steps:
+            - checkout
+            - run: npm install
+            - run: npx minilab start
+            - run: docker-compose up
+            # wait for elasticsearch to be up
+            - run: sleep 20
+            - run: ./run dev &
+            - run: node tests/add-item.test.js
+workflows:
+    tests:
+        jobs:
+            - lint
+            - test

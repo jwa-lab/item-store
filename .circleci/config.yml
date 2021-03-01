@@ -19,7 +19,7 @@ jobs:
             # wait for elasticsearch to be up
             - run: sleep 20
             - run: ./run dev &
-            - run: node tests/add-item.test.js
+            - run: npm run test
 workflows:
     tests:
         jobs:

@@ -36,6 +36,7 @@
         "nats": "^2.0.0-218"
     },
     "devDependencies": {
+        "@jwalab/minilab": "^0.0.3",
         "@tsconfig/node14": "^1.0.0",
         "@types/elasticsearch": "^5.0.37",
         "@typescript-eslint/eslint-plugin": "^4.15.0",

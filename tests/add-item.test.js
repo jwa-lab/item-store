@@ -1,58 +1,108 @@
 const { connect, JSONCodec } = require("nats");
 
-const jsonCodec = JSONCodec();
+describe("Given Item Store is connected to NATS", () => {
+    let natsConnection;
+    const jsonCodec = JSONCodec();
 
-async function test() {
-    const natsConnection = await connect();
+    beforeAll(async () => {
+        natsConnection = await connect();
+    });
 
-    try {
-        let reponse = await natsConnection.request(
-            "item-store_add_item",
-            jsonCodec.encode({
-                no_update_after: undefined,
+    afterAll(async () => {
+        await natsConnection.drain();
+    });
+
+    describe("When I add a new Item", () => {
+        let response;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store_add_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    item_id: 11,
+                    data: {
+                        XP: "100"
+                    },
+                    quantity: 1000
+                })
+            );
+        });
+
+        it("Then returns the item", () => {
+            expect(jsonCodec.decode(response.data).item).toEqual({
                 item_id: 11,
                 data: {
                     XP: "100"
                 },
                 quantity: 1000
-            })
-        );
+            });
+        });
 
-        console.log("add item", jsonCodec.decode(reponse.data));
+        describe("When I retrieve the item", () => {
+            beforeAll(async () => {
+                response = await natsConnection.request(
+                    "item-store_get_item",
+                    jsonCodec.encode({
+                        item_id: 11
+                    })
+                );
+            });
 
-        reponse = await natsConnection.request(
-            "item-store_get_item",
-            jsonCodec.encode({
-                item_id: 11
-            })
-        );
+            it("Then returns the item", () => {
+                expect(jsonCodec.decode(response.data).item).toEqual({
+                    item_id: 11,
+                    data: {
+                        XP: "100"
+                    },
+                    quantity: 1000
+                });
+            });
+        });
 
-        console.log("get item", jsonCodec.decode(reponse.data));
+        describe("When I update the item", () => {
+            beforeAll(async () => {
+                response = await natsConnection.request(
+                    "item-store_update_item",
+                    jsonCodec.encode({
+                        no_update_after: undefined,
+                        item_id: 11,
+                        data: {
+                            XP: "80"
+                        }
+                    })
+                );
+            });
 
-        reponse = await natsConnection.request(
-            "item-store_update_item",
-            jsonCodec.encode({
-                no_update_after: undefined,
-                item_id: 11,
-                data: {
-                    XP: "80"
-                }
-            })
-        );
+            it("Then returns the updated item", () => {
+                expect(jsonCodec.decode(response.data).item).toEqual({
+                    item_id: 11,
+                    data: {
+                        XP: "80"
+                    }
+                });
+            });
 
-        console.log("update item", jsonCodec.decode(reponse.data));
+            describe("When I retrieve the item", () => {
+                beforeAll(async () => {
+                    response = await natsConnection.request(
+                        "item-store_get_item",
+                        jsonCodec.encode({
+                            item_id: 11
+                        })
+                    );
+                });
 
-        reponse = await natsConnection.request(
-            "item-store_get_item",
-            jsonCodec.encode({
-                item_id: 11
-            })
-        );
-
-        console.log("get item", jsonCodec.decode(reponse.data));
-    } catch (err) {
-        console.error(err);
-    }
-}
-
-test();
+                it("Then returns the updated item", () => {
+                    expect(jsonCodec.decode(response.data).item).toEqual({
+                        item_id: 11,
+                        data: {
+                            XP: "80"
+                        },
+                        quantity: 1000
+                    });
+                });
+            });
+        });
+    });
+});

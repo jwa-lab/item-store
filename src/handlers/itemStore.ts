@@ -104,7 +104,7 @@ export const itemStoreHandlers: NatsHandler[] = [
 
                     message.respond(
                         jsonCodec.encode({
-                            data
+                            item: data
                         })
                     );
                 } catch (err) {

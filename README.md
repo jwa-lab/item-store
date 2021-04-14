@@ -28,5 +28,5 @@ To test this service, follow the steps listed in `How to setup the Dev environme
 Then
 
 ```
-node tests/add-item.test.js
+npm run test
 ```

@@ -3,6 +3,7 @@ console.log("[ITEM-STORE] Starting item store...");
 import { INDEXES, SERVICE_NAME } from "./config";
 import { warehouseHandlers } from "./private/warehouse";
 import { inventoryHandlers } from "./private/inventory";
+import { userHandlers } from "./private/user";
 import { init as initNats, registerHandlers, drain } from "./services/nats";
 import { initElasticSearch, ensureIndexExists } from "./services/elasticSearch";
 import { ensureAdminDoc } from "./services/adminStore";
@@ -21,9 +22,11 @@ async function start() {
         await ensureAdminDoc();
         await ensureIndexExists(INDEXES.WAREHOUSE);
         await ensureIndexExists(INDEXES.INVENTORY);
+        await ensureIndexExists(INDEXES.USER);
 
         registerHandlers(SERVICE_NAME, warehouseHandlers);
         registerHandlers(SERVICE_NAME, inventoryHandlers);
+        registerHandlers(SERVICE_NAME, userHandlers);
 
         process.on("SIGINT", () => {
             console.log("[ITEM-STORE] Gracefully shutting down...");

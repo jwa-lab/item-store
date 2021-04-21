@@ -24,15 +24,15 @@ export async function init(): Promise<void> {
     })().then();
 }
 
-export async function registerHandlers(
+export function registerHandlers(
     prefix: string,
     handlers: NatsHandler[]
-): Promise<void> {
-    await Promise.all(
-        handlers.map(([subject, handler]) =>
-            handler(natsConnection.subscribe(`${prefix}.${subject}`))
-        )
-    );
+): void {
+    handlers.map(([subject, handler]) => {
+        const fullSubject = `${prefix}.${subject}`;
+        console.log(`[ITEM-STORE] Registering handler ${fullSubject}`);
+        handler(natsConnection.subscribe(fullSubject));
+    });
 }
 
 export function drain(): Promise<void> {

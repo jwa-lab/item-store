@@ -25,7 +25,8 @@ describe("Given Item Store is connected to NATS", () => {
                     data: {
                         XP: "100"
                     },
-                    quantity: 1000
+                    total_quantity: 1000,
+                    available_quantity: 1000
                 })
             );
 
@@ -53,7 +54,8 @@ describe("Given Item Store is connected to NATS", () => {
                     data: {
                         XP: "100"
                     },
-                    quantity: 1000
+                    total_quantity: 1000,
+                    available_quantity: 1000
                 });
             });
         });
@@ -83,7 +85,7 @@ describe("Given Item Store is connected to NATS", () => {
                     response = await natsConnection.request(
                         "item-store.get_warehouse_item",
                         jsonCodec.encode({
-                            item_id: item_id
+                            item_id
                         })
                     );
                 });
@@ -95,7 +97,8 @@ describe("Given Item Store is connected to NATS", () => {
                         data: {
                             XP: "80"
                         },
-                        quantity: 1000
+                        total_quantity: 1000,
+                        available_quantity: 1000
                     });
                 });
             });

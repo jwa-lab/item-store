@@ -1,9 +1,11 @@
 import { getClient } from "./elasticSearch";
-import { WarehouseItem } from "../item";
+import { JSONWarehouseItem } from "../item";
 import { INDEXES } from "../config";
 import { getAdminDocField, setAdminDocField } from "./adminStore";
 
-export async function addWarehouseItem(data: WarehouseItem): Promise<number> {
+export async function addWarehouseItem(
+    data: JSONWarehouseItem
+): Promise<number> {
     const client = getClient();
 
     const lastId = await getAdminDocField<number>("last_warehouse_item_id");
@@ -23,7 +25,7 @@ export async function addWarehouseItem(data: WarehouseItem): Promise<number> {
     return newId;
 }
 
-export async function getWarehouseItem(id: number): Promise<WarehouseItem> {
+export async function getWarehouseItem(id: number): Promise<JSONWarehouseItem> {
     const client = getClient();
 
     const response = await client.get({
@@ -36,7 +38,7 @@ export async function getWarehouseItem(id: number): Promise<WarehouseItem> {
 
 export async function updateWarehouseItem(
     id: number,
-    data: WarehouseItem
+    data: JSONWarehouseItem
 ): Promise<void> {
     const client = getClient();
 
@@ -45,6 +47,24 @@ export async function updateWarehouseItem(
         id: String(id),
         body: {
             doc: data
+        }
+    });
+}
+
+export async function updateWarehouseItemField<T>(
+    id: number,
+    fieldName: string,
+    value: T
+): Promise<void> {
+    const client = getClient();
+
+    await client.update({
+        index: INDEXES.WAREHOUSE,
+        id: String(id),
+        body: {
+            doc: {
+                [fieldName]: value
+            }
         }
     });
 }

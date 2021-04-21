@@ -6,14 +6,16 @@ import {
     getWarehouseItem,
     updateWarehouseItem
 } from "../services/warehouseItemStore";
-import { WarehouseItem } from "../item";
+import { JSONWarehouseItem } from "../item";
 
-export const itemStoreHandlers: NatsHandler[] = [
+export const warehouseHandlers: NatsHandler[] = [
     [
         "add_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const item = jsonCodec.decode(message.data) as WarehouseItem;
+                const item = jsonCodec.decode(
+                    message.data
+                ) as JSONWarehouseItem;
 
                 try {
                     const newItemId = await addWarehouseItem(item);
@@ -35,7 +37,7 @@ export const itemStoreHandlers: NatsHandler[] = [
 
                     message.respond(
                         jsonCodec.encode({
-                            error: err
+                            error: err.message
                         })
                     );
                 }
@@ -48,7 +50,7 @@ export const itemStoreHandlers: NatsHandler[] = [
             for await (const message of subscription) {
                 const { item_id } = jsonCodec.decode(
                     message.data
-                ) as WarehouseItem;
+                ) as JSONWarehouseItem;
 
                 try {
                     const item = await getWarehouseItem(item_id);
@@ -66,7 +68,7 @@ export const itemStoreHandlers: NatsHandler[] = [
 
                     message.respond(
                         jsonCodec.encode({
-                            error: err
+                            error: err.message
                         })
                     );
                 }
@@ -77,7 +79,9 @@ export const itemStoreHandlers: NatsHandler[] = [
         "update_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const data = jsonCodec.decode(message.data) as WarehouseItem;
+                const data = jsonCodec.decode(
+                    message.data
+                ) as JSONWarehouseItem;
 
                 try {
                     await updateWarehouseItem(data.item_id, data);
@@ -99,7 +103,7 @@ export const itemStoreHandlers: NatsHandler[] = [
 
                     message.respond(
                         jsonCodec.encode({
-                            error: err
+                            error: err.message
                         })
                     );
                 }

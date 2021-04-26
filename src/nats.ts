@@ -29,10 +29,10 @@ export async function init(): Promise<void> {
     })().then();
 }
 
-export async function registerHandlers(handlers: NatsHandler[]): Promise<void> {
+export async function registerHandlers(prefix: string, handlers: NatsHandler[]): Promise<void> {
     await Promise.all(
         handlers.map(([subject, handler]) =>
-            handler(natsConnection.subscribe(subject))
+            handler(natsConnection.subscribe(`${prefix}/${subject}`))
         )
     );
 }

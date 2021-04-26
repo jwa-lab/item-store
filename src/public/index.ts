@@ -1,9 +1,9 @@
 import { Subscription } from "nats";
 
-import { jsonCodec, NatsHandler } from "../nats";
-import { getClient } from "../elasticSearch";
-import { ELASTICSEARCH_INDEX_NAME } from "../config";
-import { JSONItem } from "../item";
+import { jsonCodec, NatsHandler } from "../../nats";
+import { getClient } from "../../elasticSearch";
+import { ELASTICSEARCH_INDEX_NAME } from "../../config";
+import { JSONItem } from "../../item";
 
 export const itemStoreHandlers: NatsHandler[] = [
     [

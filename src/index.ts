@@ -1,6 +1,9 @@
 console.log("[ITEM-STORE] Starting item store...");
 
-import { itemStoreHandlers } from "./handlers/itemStore";
+
+import { SERVICE_NAME } from "./config";
+import { itemStoreHandlers as privateHandlers } from "./private/index";
+import { itemStoreHandlers as publicHandlers } from "./public/index";
 import { init as initNats, registerHandlers, drain } from "./nats";
 import { initElasticSearch } from "./elasticSearch";
 
@@ -14,7 +17,8 @@ async function start() {
         await initNats();
         await initElasticSearch();
 
-        await registerHandlers(itemStoreHandlers);
+        await registerHandlers(SERVICE_NAME, privateHandlers);
+        await registerHandlers(SERVICE_NAME, publicHandlers);
 
         process.on("SIGINT", () => {
             console.log("[ITEM-STORE] Gracefully shutting down...");

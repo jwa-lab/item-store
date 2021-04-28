@@ -1,5 +1,5 @@
 import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
-import { NATS_URL } from "./config";
+import { NATS_URL } from "../config";
 
 export type NatsHandler = [
     topic: string,
@@ -9,14 +9,9 @@ export type NatsHandler = [
 let natsConnection: NatsConnection;
 
 export async function init(): Promise<void> {
-    try {
-        natsConnection = await connect({
-            servers: NATS_URL
-        });
-    } catch (err) {
-        console.log(`error connecting to nats: ${err.message}`);
-        return;
-    }
+    natsConnection = await connect({
+        servers: NATS_URL
+    });
 
     console.info(
         `[ITEM-STORE] Connected to Nats on ${natsConnection.getServer()}`
@@ -29,16 +24,19 @@ export async function init(): Promise<void> {
     })().then();
 }
 
-export async function registerHandlers(prefix: string, handlers: NatsHandler[]): Promise<void> {
+export async function registerHandlers(
+    prefix: string,
+    handlers: NatsHandler[]
+): Promise<void> {
     await Promise.all(
         handlers.map(([subject, handler]) =>
-            handler(natsConnection.subscribe(`${prefix}/${subject}`))
+            handler(natsConnection.subscribe(`${prefix}.${subject}`))
         )
     );
 }
 
 export function drain(): Promise<void> {
-    console.log(`Draining connection to NATS server ${NATS_URL}`);
+    console.log(`[ITEM-STORE] Draining connection to NATS server ${NATS_URL}`);
     return natsConnection.drain();
 }
 

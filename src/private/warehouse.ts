@@ -1,30 +1,57 @@
 import { Subscription } from "nats";
-
-import { jsonCodec, NatsHandler } from "../../nats";
-import { getClient } from "../../elasticSearch";
-import { ELASTICSEARCH_INDEX_NAME } from "../../config";
-import { JSONItem } from "../../item";
+import { jsonCodec, NatsHandler } from "../services/nats";
+import { INDEXES } from "../config";
+import {
+    addWarehouseItem,
+    getWarehouseItem,
+    updateWarehouseItem
+} from "../services/warehouseItemStore";
+import { WarehouseItem } from "../item";
 
 export const itemStoreHandlers: NatsHandler[] = [
     [
-        "item-store_add_item",
+        "add_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
-            const client = getClient();
-
             for await (const message of subscription) {
-                const item = jsonCodec.decode(message.data) as JSONItem;
+                const item = jsonCodec.decode(message.data) as WarehouseItem;
 
                 try {
-                    const reponse = await client.index({
-                        index: ELASTICSEARCH_INDEX_NAME,
-                        id: String(item.item_id),
-                        body: item
-                    });
+                    const newItemId = await addWarehouseItem(item);
 
                     console.log(
-                        `[ITEM-STORE] Item added to ${ELASTICSEARCH_INDEX_NAME}`,
-                        reponse
+                        `[ITEM-STORE] Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`
                     );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            item_id: newItemId
+                        })
+                    );
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error adding item to ${INDEXES.WAREHOUSE}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "get_warehouse_item",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { item_id } = jsonCodec.decode(
+                    message.data
+                ) as WarehouseItem;
+
+                try {
+                    const item = await getWarehouseItem(item_id);
 
                     message.respond(
                         jsonCodec.encode({
@@ -33,7 +60,7 @@ export const itemStoreHandlers: NatsHandler[] = [
                     );
                 } catch (err) {
                     console.error(
-                        `[ITEM-STORE] Error adding item to ${ELASTICSEARCH_INDEX_NAME}`,
+                        `[ITEM-STORE] Error getting item ${item_id} from ${INDEXES.WAREHOUSE}`,
                         err
                     );
 
@@ -47,69 +74,26 @@ export const itemStoreHandlers: NatsHandler[] = [
         }
     ],
     [
-        "item-store_get_item",
+        "update_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
-            const client = getClient();
             for await (const message of subscription) {
-                const { item_id } = jsonCodec.decode(message.data) as JSONItem;
+                const data = jsonCodec.decode(message.data) as WarehouseItem;
 
                 try {
-                    const response = await client.get({
-                        index: ELASTICSEARCH_INDEX_NAME,
-                        id: String(item_id)
-                    });
-
-                    message.respond(
-                        jsonCodec.encode({
-                            item: response.body._source
-                        })
-                    );
-                } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error getting item from ${ELASTICSEARCH_INDEX_NAME}`,
-                        err
-                    );
-
-                    message.respond(
-                        jsonCodec.encode({
-                            error: err
-                        })
-                    );
-                }
-            }
-        }
-    ],
-    [
-        "item-store_update_item",
-        async (subscription: Subscription): Promise<void> => {
-            const client = getClient();
-
-            for await (const message of subscription) {
-                const data = jsonCodec.decode(message.data) as JSONItem;
-
-                try {
-                    const response = await client.update({
-                        index: ELASTICSEARCH_INDEX_NAME,
-                        id: String(data.item_id),
-                        body: {
-                            doc: data
-                        }
-                    });
+                    await updateWarehouseItem(data.item_id, data);
 
                     console.log(
-                        `[ITEM-STORE] Item updated in ${ELASTICSEARCH_INDEX_NAME}`,
-                        data,
-                        response
+                        `[ITEM-STORE] Item ${data.item_id} updated in ${INDEXES.WAREHOUSE}`
                     );
 
                     message.respond(
                         jsonCodec.encode({
-                            item: data
+                            item_id: data.item_id
                         })
                     );
                 } catch (err) {
                     console.error(
-                        `[ITEM-STORE] Error updating item in ${ELASTICSEARCH_INDEX_NAME}`,
+                        `[ITEM-STORE] Error updating item ${data.item_id} in ${INDEXES.WAREHOUSE}`,
                         err
                     );
 

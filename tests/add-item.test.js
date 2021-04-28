@@ -14,13 +14,13 @@ describe("Given Item Store is connected to NATS", () => {
 
     describe("When I add a new Item", () => {
         let response;
+        let item_id;
 
         beforeAll(async () => {
             response = await natsConnection.request(
-                "item-store_add_item",
+                "item-store.add_warehouse_item",
                 jsonCodec.encode({
                     no_update_after: undefined,
-                    item_id: 11,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
@@ -28,32 +28,27 @@ describe("Given Item Store is connected to NATS", () => {
                     quantity: 1000
                 })
             );
+
+            item_id = jsonCodec.decode(response.data).item_id;
         });
 
-        it("Then returns the item", () => {
-            expect(jsonCodec.decode(response.data).item).toEqual({
-                item_id: 11,
-                name: "Christiano Ronaldo",
-                data: {
-                    XP: "100"
-                },
-                quantity: 1000
-            });
+        it("Then returns the item id", () => {
+            expect(typeof item_id).toBe("number");
         });
 
         describe("When I retrieve the item", () => {
             beforeAll(async () => {
                 response = await natsConnection.request(
-                    "item-store_get_item",
+                    "item-store.get_warehouse_item",
                     jsonCodec.encode({
-                        item_id: 11
+                        item_id: item_id
                     })
                 );
             });
 
             it("Then returns the item", () => {
                 expect(jsonCodec.decode(response.data).item).toEqual({
-                    item_id: 11,
+                    item_id: item_id,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
@@ -66,10 +61,10 @@ describe("Given Item Store is connected to NATS", () => {
         describe("When I update the item", () => {
             beforeAll(async () => {
                 response = await natsConnection.request(
-                    "item-store_update_item",
+                    "item-store.update_warehouse_item",
                     jsonCodec.encode({
                         no_update_after: undefined,
-                        item_id: 11,
+                        item_id: item_id,
                         data: {
                             XP: "80"
                         }
@@ -77,28 +72,25 @@ describe("Given Item Store is connected to NATS", () => {
                 );
             });
 
-            it("Then returns the updated item", () => {
-                expect(jsonCodec.decode(response.data).item).toEqual({
-                    item_id: 11,
-                    data: {
-                        XP: "80"
-                    }
-                });
+            it("Then returns the item_id", () => {
+                expect(jsonCodec.decode(response.data).item_id).toEqual(
+                    item_id
+                );
             });
 
             describe("When I retrieve the item", () => {
                 beforeAll(async () => {
                     response = await natsConnection.request(
-                        "item-store_get_item",
+                        "item-store.get_warehouse_item",
                         jsonCodec.encode({
-                            item_id: 11
+                            item_id: item_id
                         })
                     );
                 });
 
                 it("Then returns the updated item", () => {
                     expect(jsonCodec.decode(response.data).item).toEqual({
-                        item_id: 11,
+                        item_id: item_id,
                         name: "Christiano Ronaldo",
                         data: {
                             XP: "80"

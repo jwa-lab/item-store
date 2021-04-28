@@ -16,14 +16,14 @@ jobs:
             - run: npm install
             - run: npx minilab start
             - run:
-                command: docker-compose up
-                background: true
+                  command: docker-compose up
+                  background: true
             # wait for elasticsearch to be up
             - run: sleep 180
             - run: ./run build
             - run:
-                command: ./run start
-                background: true
+                  command: ./run start
+                  background: true
             - run: npm run test
 workflows:
     tests:

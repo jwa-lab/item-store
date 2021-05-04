@@ -1,0 +1,181 @@
+{
+    "info": {
+        "_postman_id": "318a78fa-384a-4964-b7b9-8e804c44e6b9",
+        "name": "JWA Platform - Item Store",
+        "description": "All APIs offered by the JWA Platform",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Create Item",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n\r\n    \"name\": \"Karim Benzema\",\r\n    \"data\": {\r\n        \"XP\": \"97\"\r\n    },\r\n    \"total_quantity\": 10,\r\n    \"available_quantity\": 10\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/item",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "item"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Item",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/item/196",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "item", "196"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Item",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"item_id\": 196,\r\n    \"name\": \"Karim Benzema\",\r\n    \"data\": {\r\n        \"XP\": \"98\"\r\n    },\r\n    \"total_quantity\": 10,\r\n    \"available_quantity\": 10\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/item/196",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "item", "196"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Create User",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"user_id\": 12\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/user",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "user"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get User",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/user/83ViOnkB-8XRad6Sw-V_",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "user", "83ViOnkB-8XRad6Sw-V_"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Assign Item",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"user_id\": \"83ViOnkB-8XRad6Sw-V_\",\r\n    \"item_id\": 196\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "inventory"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Get Inventory Item",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/JnVuOnkB-8XRad6S5ee9",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "inventory", "JnVuOnkB-8XRad6S5ee9"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Update Inventory Item",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"CLUB\": \"Racing Club Strasbourg\"\r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/JnVuOnkB-8XRad6S5ee9",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "inventory", "JnVuOnkB-8XRad6S5ee9"]
+                }
+            },
+            "response": []
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [""]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "AIRLOCK_URL",
+            "value": "http://localhost:8000"
+        }
+    ]
+}

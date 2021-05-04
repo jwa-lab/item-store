@@ -43,7 +43,7 @@ describe("Given Item Store is connected to NATS", () => {
             });
 
             it("Then returns the user", () => {
-                expect(jsonCodec.decode(response.data).user).toEqual({
+                expect(jsonCodec.decode(response.data)).toEqual({
                     user_id: 12,
                     inventory_address: "KT1_SFFG345FFSFdqsfz"
                 });
@@ -81,7 +81,7 @@ describe("Given Item Store is connected to NATS", () => {
                 });
 
                 it("Then returns the updated user", () => {
-                    expect(jsonCodec.decode(response.data).user).toEqual({
+                    expect(jsonCodec.decode(response.data)).toEqual({
                         user_id: 12,
                         inventory_address: "KT1_NEWCONTRACTADDRESS123"
                     });

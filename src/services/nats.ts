@@ -1,7 +1,13 @@
 import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
 import { NATS_URL } from "../config";
 
-export type NatsHandler = [
+export type PrivateNatsHandler = [
+    topic: string,
+    handler: (subscription: Subscription) => Promise<void>
+];
+
+export type PublicNatsHandler = [
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     topic: string,
     handler: (subscription: Subscription) => Promise<void>
 ];
@@ -24,13 +30,24 @@ export async function init(): Promise<void> {
     })().then();
 }
 
-export function registerHandlers(
+export function registerPrivateHandlers(
     prefix: string,
-    handlers: NatsHandler[]
+    handlers: PrivateNatsHandler[]
 ): void {
     handlers.map(([subject, handler]) => {
         const fullSubject = `${prefix}.${subject}`;
-        console.log(`[ITEM-STORE] Registering handler ${fullSubject}`);
+        console.log(`[ITEM-STORE] Registering private handler ${fullSubject}`);
+        handler(natsConnection.subscribe(fullSubject));
+    });
+}
+
+export function registerPublicHandlers(
+    prefix: string,
+    handlers: PublicNatsHandler[]
+): void {
+    handlers.map(([method, subject, handler]) => {
+        const fullSubject = `${method}:${prefix}.${subject}`;
+        console.log(`[ITEM-STORE] Registering public handler ${fullSubject}`);
         handler(natsConnection.subscribe(fullSubject));
     });
 }

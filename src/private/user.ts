@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { jsonCodec, NatsHandler } from "../services/nats";
+import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
@@ -13,7 +13,7 @@ interface UpdateUserRequest {
     user: JSONUser;
 }
 
-export const userHandlers: NatsHandler[] = [
+export const userPrivateHandlers: PrivateNatsHandler[] = [
     [
         "add_user",
         async (subscription: Subscription): Promise<void> => {
@@ -58,11 +58,7 @@ export const userHandlers: NatsHandler[] = [
                 try {
                     const user = await getUser(user_id);
 
-                    message.respond(
-                        jsonCodec.encode({
-                            user
-                        })
-                    );
+                    message.respond(jsonCodec.encode(user));
                 } catch (err) {
                     console.error(
                         `[USER-STORE] Error getting user ${user_id} from ${INDEXES.USER}`,

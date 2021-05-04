@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { jsonCodec, NatsHandler } from "../services/nats";
+import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES } from "../config";
 import {
     addWarehouseItem,
@@ -8,7 +8,7 @@ import {
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
 
-export const warehouseHandlers: NatsHandler[] = [
+export const warehousePrivateHandlers: PrivateNatsHandler[] = [
     [
         "add_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
@@ -55,11 +55,7 @@ export const warehouseHandlers: NatsHandler[] = [
                 try {
                     const item = await getWarehouseItem(item_id);
 
-                    message.respond(
-                        jsonCodec.encode({
-                            item
-                        })
-                    );
+                    message.respond(jsonCodec.encode(item));
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error getting item ${item_id} from ${INDEXES.WAREHOUSE}`,

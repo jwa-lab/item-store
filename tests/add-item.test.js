@@ -48,7 +48,7 @@ describe("Given Item Store is connected to NATS", () => {
             });
 
             it("Then returns the item", () => {
-                expect(jsonCodec.decode(response.data).item).toEqual({
+                expect(jsonCodec.decode(response.data)).toEqual({
                     item_id: item_id,
                     name: "Christiano Ronaldo",
                     data: {
@@ -91,7 +91,7 @@ describe("Given Item Store is connected to NATS", () => {
                 });
 
                 it("Then returns the updated item", () => {
-                    expect(jsonCodec.decode(response.data).item).toEqual({
+                    expect(jsonCodec.decode(response.data)).toEqual({
                         item_id: item_id,
                         name: "Christiano Ronaldo",
                         data: {

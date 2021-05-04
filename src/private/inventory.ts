@@ -5,7 +5,7 @@ import {
     getInventoryItem,
     updateInventoryItem
 } from "../services/inventoryItemStore";
-import { jsonCodec, NatsHandler } from "../services/nats";
+import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import {
     getWarehouseItem,
     updateWarehouseItemField
@@ -25,7 +25,7 @@ interface GetInventoryItemRequest {
     inventory_item_id: string;
 }
 
-export const inventoryHandlers: NatsHandler[] = [
+export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
         "assign_inventory_item",
         async (subscription: Subscription): Promise<void> => {
@@ -142,11 +142,7 @@ export const inventoryHandlers: NatsHandler[] = [
                         inventory_item_id
                     );
 
-                    message.respond(
-                        jsonCodec.encode({
-                            inventory_item: inventoryItem
-                        })
-                    );
+                    message.respond(jsonCodec.encode(inventoryItem));
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,

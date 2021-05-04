@@ -59,7 +59,7 @@ describe("Given Inventory is connected to NATS", () => {
                     })
                 );
 
-                warehouseItem = jsonCodec.decode(response.data).item;
+                warehouseItem = jsonCodec.decode(response.data);
             });
 
             it("Then has reduced the available quantity by 1", () => {
@@ -108,7 +108,7 @@ describe("Given Inventory is connected to NATS", () => {
             });
 
             it("Then returns the new inventory item", () => {
-                expect(jsonCodec.decode(response.data).inventory_item).toEqual({
+                expect(jsonCodec.decode(response.data)).toEqual({
                     item_id: warehouseItemId,
                     user_id: "user_1",
                     instance_number: 1,
@@ -150,9 +150,7 @@ describe("Given Inventory is connected to NATS", () => {
                     });
 
                     it("Then returns the updated item", () => {
-                        expect(
-                            jsonCodec.decode(response.data).inventory_item
-                        ).toEqual({
+                        expect(jsonCodec.decode(response.data)).toEqual({
                             item_id: warehouseItemId,
                             user_id: "user_1",
                             instance_number: 1,

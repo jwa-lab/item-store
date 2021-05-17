@@ -89,4 +89,43 @@ describe("Given Item Store is connected to NATS", () => {
             });
         });
     });
+    describe("When I add a new User with a Validation Error [a field (user_id) is wrong-typed]", () => {
+        let response;
+        let message;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_user",
+                jsonCodec.encode({
+                    user_id: "azerty",
+                    inventory_address: "KT1_SFFG345FFSFdqsfz"
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("user_id must be a number");
+        });
+    });
+    describe("When I add a new User with a Validation Error [a field (user_id) is missing]", () => {
+        let response;
+        let message;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_user",
+                jsonCodec.encode({
+                    inventory_address: "KT1_SFFG345FFSFdqsfz"
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("The user_id (string) must be provided.");
+        });
+    });
 });

@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { INDEXES } from "../config";
+import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addInventoryItem,
     getInventoryItem,
@@ -11,6 +11,7 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
+import { inventoryItemSchema } from "../services/validatorSchema";
 
 interface AssignItemRequest {
     user_id: string;
@@ -42,6 +43,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as AssignItemRequest;
 
                 try {
+                    await inventoryItemSchema.validate({ item_id, user_id });
                     const {
                         available_quantity,
                         total_quantity
@@ -89,6 +91,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -134,6 +139,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [

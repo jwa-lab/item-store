@@ -1,4 +1,10 @@
-import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
+import {
+    connect,
+    NatsConnection,
+    Subscription,
+    JSONCodec,
+    SubscriptionOptions
+} from "nats";
 import { NATS_URL } from "../config";
 
 type JSONValue =
@@ -11,13 +17,15 @@ type JSONValue =
 
 export type PrivateNatsHandler = [
     topic: string,
-    handler: (subscription: Subscription) => Promise<void>
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
 ];
 
 export type PublicNatsHandler = [
     method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     topic: string,
-    handler: (subscription: Subscription) => Promise<void>
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
 ];
 
 export interface AirlockPayload {

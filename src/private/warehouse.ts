@@ -4,7 +4,7 @@ import {
     jsonCodec,
     PrivateNatsHandler
 } from "../services/nats";
-import { INDEXES } from "../config";
+import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addWarehouseItem,
     getWarehouseItem,
@@ -12,6 +12,7 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
+import { warehouseItemSchema } from "../services/validatorSchema";
 
 interface SearchQuery {
     start: number;
@@ -30,6 +31,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    warehouseItemSchema.isValidSync({});
+                    await warehouseItemSchema.validate(item);
+
                     const newItemId = await addWarehouseItem(item);
 
                     console.log(
@@ -54,6 +58,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -145,6 +152,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

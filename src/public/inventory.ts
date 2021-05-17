@@ -7,6 +7,9 @@ import {
     PublicNatsHandler
 } from "../services/nats";
 
+import { itemSchema } from "../services/validatorSchema";
+import type { Asserts } from 'yup';
+
 export const inventoryPublicHandlers: PublicNatsHandler[] = [
     [
         "POST",
@@ -18,6 +21,9 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
+
+                    interface Item extends Asserts<typeof itemSchema> {}
+                    const validated: Item = itemSchema.validateSync(body);
 
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",

@@ -2,6 +2,12 @@ import { getClient } from "./elasticSearch";
 import { JSONWarehouseItem } from "../item";
 import { INDEXES } from "../config";
 import { getAdminDocField, setAdminDocField } from "./adminStore";
+import { SearchResponse } from "elasticsearch";
+
+interface WarehouseItemsSearchResults {
+    total: number;
+    results: JSONWarehouseItem[];
+}
 
 export async function addWarehouseItem(
     data: JSONWarehouseItem
@@ -34,6 +40,29 @@ export async function getWarehouseItem(id: number): Promise<JSONWarehouseItem> {
     });
 
     return response.body._source;
+}
+
+export async function getWarehouseItems(
+    from: number,
+    size: number
+): Promise<WarehouseItemsSearchResults> {
+    const client = getClient();
+
+    const response = await client.search({
+        index: INDEXES.WAREHOUSE,
+        from,
+        size
+    });
+
+    const responseBody = response.body as SearchResponse<JSONWarehouseItem>;
+
+    const total = responseBody.hits.total;
+    const results = responseBody.hits.hits;
+
+    return {
+        total,
+        results: results.map((result) => result._source)
+    };
 }
 
 export async function updateWarehouseItem(

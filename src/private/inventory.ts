@@ -3,6 +3,7 @@ import { INDEXES } from "../config";
 import {
     addInventoryItem,
     getInventoryItem,
+    getInventoryItemsByUserId,
     updateInventoryItem
 } from "../services/inventoryItemStore";
 import { jsonCodec, PrivateNatsHandler } from "../services/nats";
@@ -23,6 +24,12 @@ interface UpdateInventoryItemRequest {
 
 interface GetInventoryItemRequest {
     inventory_item_id: string;
+}
+
+interface SearchInventoryItemsByUser {
+    user_id: string;
+    start: number;
+    limit: number;
 }
 
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
@@ -146,6 +153,39 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "get_inventory_items",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { user_id, start, limit } = jsonCodec.decode(
+                    message.data
+                ) as SearchInventoryItemsByUser;
+
+                try {
+                    const inventoryItemsSearchResults = await getInventoryItemsByUserId(
+                        user_id,
+                        start,
+                        limit
+                    );
+
+                    message.respond(
+                        jsonCodec.encode(inventoryItemsSearchResults)
+                    );
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
                         err
                     );
 

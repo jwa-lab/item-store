@@ -1,6 +1,11 @@
 import { Subscription } from "nats";
 
-import { getConnection, jsonCodec, PublicNatsHandler } from "../services/nats";
+import {
+    AirlockPayload,
+    getConnection,
+    jsonCodec,
+    PublicNatsHandler
+} from "../services/nats";
 import { JSONUser } from "../user";
 
 export const userPublicHandlers: PublicNatsHandler[] = [
@@ -11,8 +16,11 @@ export const userPublicHandlers: PublicNatsHandler[] = [
             for await (const message of subscription) {
                 try {
                     const natsConnection = getConnection();
+                    const data = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
 
-                    const user = jsonCodec.decode(message.data) as JSONUser;
+                    const user = (data.body as unknown) as JSONUser;
 
                     const response = await natsConnection.request(
                         "item-store.add_user",

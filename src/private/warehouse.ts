@@ -1,12 +1,24 @@
 import { Subscription } from "nats";
-import { jsonCodec, PrivateNatsHandler } from "../services/nats";
+import {
+    AirlockPayload,
+    jsonCodec,
+    PrivateNatsHandler
+} from "../services/nats";
 import { INDEXES } from "../config";
 import {
     addWarehouseItem,
     getWarehouseItem,
+    getWarehouseItems,
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
+
+interface SearchQuery {
+    start: number;
+    limit: number;
+}
+
+const MAX_RESULTS = 100;
 
 export const warehousePrivateHandlers: PrivateNatsHandler[] = [
     [
@@ -32,6 +44,35 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error adding item to ${INDEXES.WAREHOUSE}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "get_warehouse_items",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const data = jsonCodec.decode(message.data) as AirlockPayload;
+                const { start, limit } = (data as unknown) as SearchQuery;
+
+                try {
+                    const items = await getWarehouseItems(
+                        start || 0,
+                        limit ? limit : MAX_RESULTS
+                    );
+
+                    message.respond(jsonCodec.encode(items));
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error getting items from ${INDEXES.WAREHOUSE}`,
                         err
                     );
 

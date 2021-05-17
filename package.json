@@ -34,7 +34,8 @@
     "homepage": "https://github.com/jwa-lab/item-store#readme",
     "dependencies": {
         "@elastic/elasticsearch": "^7.11.0",
-        "nats": "^2.0.0-218"
+        "nats": "^2.0.0-218",
+        "yup": "^0.32.9"
     },
     "devDependencies": {
         "@jwalab/minilab": "^0.0.3",

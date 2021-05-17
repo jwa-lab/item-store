@@ -4,7 +4,7 @@ import { INDEXES, SERVICE_NAME } from "./config";
 import { warehousePrivateHandlers } from "./private/warehouse";
 import { inventoryPrivateHandlers } from "./private/inventory";
 import { userPrivateHandlers } from "./private/user";
-import { itemPublicHandlers } from "./public/item";
+import { itemPublicHandlers } from "./public/warehouse";
 import { userPublicHandlers } from "./public/user";
 import { inventoryPublicHandlers } from "./public/inventory";
 import {

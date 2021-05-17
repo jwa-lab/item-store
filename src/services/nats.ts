@@ -1,6 +1,14 @@
 import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
 import { NATS_URL } from "../config";
 
+type JSONValue =
+    | string
+    | number
+    | boolean
+    | null
+    | JSONValue[]
+    | { [key: string]: JSONValue };
+
 export type PrivateNatsHandler = [
     topic: string,
     handler: (subscription: Subscription) => Promise<void>
@@ -11,6 +19,11 @@ export type PublicNatsHandler = [
     topic: string,
     handler: (subscription: Subscription) => Promise<void>
 ];
+
+export interface AirlockPayload {
+    body: JSONValue;
+    query: JSONValue;
+}
 
 let natsConnection: NatsConnection;
 

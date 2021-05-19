@@ -1,5 +1,6 @@
 import { Subscription } from "nats";
 import { INDEXES } from "../config";
+import { JSONInventoryItem } from "../item";
 import {
     addInventoryItem,
     getInventoryItem,
@@ -15,6 +16,11 @@ import {
 interface AssignItemRequest {
     user_id: string;
     item_id: number;
+}
+
+interface TransferItemRequest {
+    inventory_item_id: string;
+    user_id: string;   
 }
 
 interface UpdateInventoryItemRequest {
@@ -186,6 +192,48 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "transfer_inventory_item",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { inventory_item_id, user_id } = jsonCodec.decode(
+                    message.data
+                ) as TransferItemRequest;
+
+                try {
+
+                    const inventoryItem = await getInventoryItem(
+                        inventory_item_id
+                    );
+
+                    await updateInventoryItem(inventory_item_id, {
+                        ...inventoryItem.user_id
+                    });
+
+                    console.log(
+                        `[ITEM-STORE] Item ${inventory_item_id} transfered to user ${user_id} in ${INDEXES.INVENTORY}`
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            inventory_item_id
+                        })
+                    );
+                }catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error transfering item for user_id ${user_id} in ${INDEXES.INVENTORY}`,
                         err
                     );
 

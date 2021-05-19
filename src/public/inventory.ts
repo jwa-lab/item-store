@@ -8,7 +8,7 @@ import {
     PublicNatsHandler
 } from "../services/nats";
 
-import * as yup from 'yup';
+const config_1 = require("../config");
 
 export const inventoryPublicHandlers: PublicNatsHandler[] = [
     [
@@ -22,10 +22,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                    inventoryItemSchema.validate(body)
-                        .catch(function(err) {
-                            console.log(err.errors);}
-                        );
+                    inventoryItemSchema.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",

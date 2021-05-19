@@ -2,6 +2,7 @@ import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
 import { JSONWarehouseItem } from "../item";
 import { warehouseItemSchema } from "../services/validatorSchema";
+import { ValidationError } from "yup";
 
 import {
     AirlockPayload,
@@ -9,6 +10,8 @@ import {
     jsonCodec,
     PublicNatsHandler
 } from "../services/nats";
+
+const config_1 = require("../config");
 
 export const itemPublicHandlers: PublicNatsHandler[] = [
     [
@@ -23,16 +26,12 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                    warehouseItemSchema.validate(body)
-                        .catch(function(err) {
-                            console.log(err.errors);}
-                        );
+                    await warehouseItemSchema.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
                         jsonCodec.encode(body)
                     );
-
                     message.respond(response.data)
                 } catch (err) {
                     message.respond(

@@ -25,10 +25,7 @@ export const userPublicHandlers: PublicNatsHandler[] = [
 
                     const user = (data.body as unknown) as JSONUser;
 
-                    userSchema.validate(user)
-                        .catch(function(err) {
-                            console.log(err.errors);}
-                        );
+                    userSchema.validate(user);
 
                     const response = await natsConnection.request(
                         "item-store.add_user",

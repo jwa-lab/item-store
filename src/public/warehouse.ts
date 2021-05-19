@@ -23,14 +23,17 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                     console.log(warehouseItemSchema.validate(body));
+                    warehouseItemSchema.validate(body)
+                        .catch(function(err) {
+                            console.log(err.errors);}
+                        );
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
                         jsonCodec.encode(body)
                     );
 
-                    message.respond(response.data);
+                    message.respond(response.data)
                 } catch (err) {
                     message.respond(
                         jsonCodec.encode({

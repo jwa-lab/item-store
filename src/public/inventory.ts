@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { inventoryItemSchema, warehouseItemSchema } from "../services/validatorSchema";
+import { inventoryItemSchema } from "../services/validatorSchema";
 
 import {
     AirlockPayload,
@@ -7,8 +7,6 @@ import {
     jsonCodec,
     PublicNatsHandler
 } from "../services/nats";
-
-const config_1 = require("../config");
 
 export const inventoryPublicHandlers: PublicNatsHandler[] = [
     [

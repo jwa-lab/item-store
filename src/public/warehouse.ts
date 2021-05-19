@@ -2,7 +2,6 @@ import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
 import { JSONWarehouseItem } from "../item";
 import { warehouseItemSchema } from "../services/validatorSchema";
-import { ValidationError } from "yup";
 
 import {
     AirlockPayload,
@@ -10,8 +9,6 @@ import {
     jsonCodec,
     PublicNatsHandler
 } from "../services/nats";
-
-const config_1 = require("../config");
 
 export const itemPublicHandlers: PublicNatsHandler[] = [
     [

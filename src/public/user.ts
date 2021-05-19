@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { userSchema, warehouseItemSchema } from "../services/validatorSchema";
+import { userSchema } from "../services/validatorSchema";
 
 import {
     AirlockPayload,
@@ -8,8 +8,6 @@ import {
     PublicNatsHandler
 } from "../services/nats";
 import { JSONUser } from "../user";
-
-import * as yup from 'yup';
 
 export const userPublicHandlers: PublicNatsHandler[] = [
     [

@@ -6,8 +6,7 @@ export const inventoryItemSchema = yup.object({
 });
 
 export const userSchema = yup.object({
-    user_id: yup.number().positive().defined("All fields must be completed"),
-    inventory_address: yup.string().defined("All fields must be completed")
+    user_id: yup.number().positive().defined("All fields must be completed")
 });
 
 export const warehouseItemSchema = yup.object().shape({

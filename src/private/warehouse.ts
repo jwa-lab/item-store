@@ -121,7 +121,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    await updateWarehouseItem(data.item_id, data);
+                    await updateWarehouseItem(data.item_id,  data);
 
                     console.log(
                         `[ITEM-STORE] Item ${data.item_id} updated in ${INDEXES.WAREHOUSE}`

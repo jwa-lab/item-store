@@ -126,5 +126,32 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                 }
             }
         }
+    ],
+    [
+        "PUT",
+        "inventory.*",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                try {
+                    const natsConnection = getConnection();
+                    const { body } = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+
+                    const response = await natsConnection.request(
+                        "item-store.transfer_inventory_item",
+                        jsonCodec.encode(body)
+                    );
+
+                    message.respond(response.data);
+                } catch (err) {
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
     ]
 ];

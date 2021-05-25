@@ -22,7 +22,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 const user = jsonCodec.decode(message.data) as JSONUser;
 
                 try {
-                    userSchema.validate(user);
+                    await userSchema.validate(user);
                     const newUserId = await addUser(user);
 
                     console.log(

@@ -163,4 +163,77 @@ describe("Given Inventory is connected to NATS", () => {
             });
         });
     });
+    describe("When I assign an available Item to a User with a Validation Error [a field (user_id) is missing]", () => {
+        let response;
+        let message;
+        let warehouseItemId;
+        let inventoryItemId;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: "Christiano Ronaldo",
+                    data: {
+                        XP: "94"
+                    },
+                    total_quantity: 1,
+                    available_quantity: 1
+                })
+            );
+
+            warehouseItemId = jsonCodec.decode(response.data).item_id;
+
+            response = await natsConnection.request(
+                "item-store.assign_inventory_item",
+                jsonCodec.encode({
+                    item_id: warehouseItemId
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("The user_id must be provided, don't forget it ! ");
+        });
+    });
+    describe("When I assign an available Item to a User with a Validation Error [a field (item_id) is wrong-typed]", () => {
+        let response;
+        let message;
+        let warehouseItemId;
+        let inventoryItemId;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: "Christiano Ronaldo",
+                    data: {
+                        XP: "94"
+                    },
+                    total_quantity: 1,
+                    available_quantity: 1
+                })
+            );
+
+            warehouseItemId = jsonCodec.decode(response.data).item_id;
+
+            response = await natsConnection.request(
+                "item-store.assign_inventory_item",
+                jsonCodec.encode({
+                    user_id: "user_1",
+                    item_id: "thisisatest"
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("item_id must be a number");
+        });
+    });
 });

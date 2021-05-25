@@ -104,4 +104,78 @@ describe("Given Item Store is connected to NATS", () => {
             });
         });
     });
+    describe("When I add a new Item with a Validation Error [a field (total_quantity) is missing]", () => {
+        let response;
+        let message;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: "Christiano Ronaldo",
+                    data: {
+                        XP: "100"
+                    },
+                    available_quantity: 1000
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("The total quantity must be provided, don't forget it ! ");
+        });
+    });
+    describe("When I add a new Item with a Validation Error [a number (total_quantity) is negative]", () => {
+        let response;
+        let message;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: "Christiano Ronaldo",
+                    data: {
+                        XP: "100"
+                    },
+                    total_quantity: -1000,
+                    available_quantity: 1000,
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("The total quantity must be a positive number.");
+        });
+    });
+    describe("When I add a new Item with a Validation Error [a field (name) is wrong-typed]", () => {
+        let response;
+        let message;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: ["234"],
+                    data: {
+                        XP: "100"
+                    },
+                    total_quantity: 1000,
+                    available_quantity: 1000,
+                })
+            );
+
+            message = jsonCodec.decode(response.data).error;
+        });
+
+        it("Then returns an error", () => {
+            expect(message).toEqual("name must be a string");
+        });
+    });
 });

@@ -11,6 +11,8 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
+import { inventoryItemSchema } from "../services/validatorSchema";
+
 
 interface AssignItemRequest {
     user_id: string;
@@ -42,6 +44,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as AssignItemRequest;
 
                 try {
+                    inventoryItemSchema.validate({ item_id, user_id });
                     const {
                         available_quantity,
                         total_quantity

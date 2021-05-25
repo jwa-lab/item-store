@@ -1,5 +1,4 @@
 import { Subscription } from "nats";
-import { inventoryItemSchema } from "../services/validatorSchema";
 
 import {
     AirlockPayload,
@@ -19,8 +18,6 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
-
-                    inventoryItemSchema.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",

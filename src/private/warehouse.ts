@@ -12,6 +12,7 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
+import { warehouseItemSchema } from "../services/validatorSchema";
 
 interface SearchQuery {
     start: number;
@@ -30,6 +31,8 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    await warehouseItemSchema.validate(item);
+
                     const newItemId = await addWarehouseItem(item);
 
                     console.log(

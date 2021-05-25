@@ -3,6 +3,7 @@ import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
+import { userSchema } from "../services/validatorSchema";
 
 interface GetUserRequest {
     user_id: string;
@@ -21,6 +22,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 const user = jsonCodec.decode(message.data) as JSONUser;
 
                 try {
+                    userSchema.validate(user);
                     const newUserId = await addUser(user);
 
                     console.log(

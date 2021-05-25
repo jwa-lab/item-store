@@ -1,5 +1,4 @@
 import { Subscription } from "nats";
-import { userSchema } from "../services/validatorSchema";
 
 import {
     AirlockPayload,
@@ -22,8 +21,6 @@ export const userPublicHandlers: PublicNatsHandler[] = [
                     ) as AirlockPayload;
 
                     const user = (data.body as unknown) as JSONUser;
-
-                    userSchema.validate(user);
 
                     const response = await natsConnection.request(
                         "item-store.add_user",

@@ -1,7 +1,6 @@
 import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
 import { JSONWarehouseItem } from "../item";
-import { warehouseItemSchema } from "../services/validatorSchema";
 
 import {
     AirlockPayload,
@@ -22,8 +21,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
-
-                    await warehouseItemSchema.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",

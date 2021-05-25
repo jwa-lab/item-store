@@ -4,7 +4,7 @@ import {
     jsonCodec,
     PrivateNatsHandler
 } from "../services/nats";
-import { INDEXES } from "../config";
+import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addWarehouseItem,
     getWarehouseItem,
@@ -57,6 +57,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -148,6 +151,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

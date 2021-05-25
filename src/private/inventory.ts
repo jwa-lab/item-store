@@ -1,5 +1,5 @@
 import { Subscription } from "nats";
-import { INDEXES } from "../config";
+import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addInventoryItem,
     getInventoryItem,
@@ -92,6 +92,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -137,6 +140,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [

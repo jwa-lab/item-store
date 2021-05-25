@@ -1,5 +1,6 @@
 import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
+import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 
 import {
@@ -35,6 +36,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -137,6 +141,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

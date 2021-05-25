@@ -1,6 +1,6 @@
 import { Subscription } from "nats";
 import { jsonCodec, PrivateNatsHandler } from "../services/nats";
-import { INDEXES } from "../config";
+import { INDEXES, SERVICE_NAME } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
 import { userSchema } from "../services/validatorSchema";
@@ -47,6 +47,9 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -109,6 +112,9 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

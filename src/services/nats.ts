@@ -55,10 +55,10 @@ export function registerPrivateHandlers(
     prefix: string,
     handlers: PrivateNatsHandler[]
 ): void {
-    handlers.map(([subject, handler]) => {
+    handlers.map(([subject, handler, options]) => {
         const fullSubject = `${prefix}.${subject}`;
         console.log(`[ITEM-STORE] Registering private handler ${fullSubject}`);
-        handler(natsConnection.subscribe(fullSubject));
+        handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 
@@ -66,10 +66,10 @@ export function registerPublicHandlers(
     prefix: string,
     handlers: PublicNatsHandler[]
 ): void {
-    handlers.map(([method, subject, handler]) => {
+    handlers.map(([method, subject, handler, options]) => {
         const fullSubject = `${method}:${prefix}.${subject}`;
         console.log(`[ITEM-STORE] Registering public handler ${fullSubject}`);
-        handler(natsConnection.subscribe(fullSubject));
+        handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 

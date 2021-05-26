@@ -1,7 +1,7 @@
 import { getClient } from "./elasticSearch";
 import { JSONWarehouseItem } from "../item";
 import { INDEXES } from "../config";
-import { getAdminDocField, setAdminDocField } from "./adminStore";
+import { incrementLastWarehouseItemId } from "./adminStore";
 import { SearchResponse } from "elasticsearch";
 
 interface WarehouseItemsSearchResults {
@@ -14,8 +14,7 @@ export async function addWarehouseItem(
 ): Promise<number> {
     const client = getClient();
 
-    const lastId = await getAdminDocField<number>("last_warehouse_item_id");
-    const newId = lastId + 1;
+    const newId = await incrementLastWarehouseItemId();
 
     await client.index({
         index: INDEXES.WAREHOUSE,
@@ -25,8 +24,6 @@ export async function addWarehouseItem(
             item_id: newId
         }
     });
-
-    await setAdminDocField<number>("last_warehouse_item_id", newId);
 
     return newId;
 }

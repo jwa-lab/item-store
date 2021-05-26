@@ -2,7 +2,10 @@ const {
     SERVICE_NAME = "item-store",
     NATS_URL = "",
     ELASTICSEARCH_URI = "",
-    ELASTICSEARCH_INDEX_NAME = ""
+    ELASTICSEARCH_INDEX_NAME = "",
+    // should be ajusted according to the number of processes.
+    // 4 instances of item-store = 4 potential concurrent requests = 4 retries
+    RETRY_ON_CONFLICT_RETRIES = 4
 } = process.env;
 
 if (!NATS_URL) {
@@ -23,7 +26,15 @@ if (!ELASTICSEARCH_INDEX_NAME) {
     );
 }
 
-export { SERVICE_NAME, ELASTICSEARCH_URI, NATS_URL };
+const NUM_RETRY_ON_CONFLICT_RETRIES = Number(RETRY_ON_CONFLICT_RETRIES);
+
+export {
+    SERVICE_NAME,
+    ELASTICSEARCH_URI,
+    NATS_URL,
+    NUM_RETRY_ON_CONFLICT_RETRIES as RETRY_ON_CONFLICT_RETRIES
+};
+
 export const INDEXES = {
     INVENTORY: `${ELASTICSEARCH_INDEX_NAME}-inventory`,
     WAREHOUSE: `${ELASTICSEARCH_INDEX_NAME}-warehouse`,

@@ -104,6 +104,7 @@ describe("Given Item Store is connected to NATS", () => {
             });
         });
     });
+
     describe("When I add a new Item with a Validation Error [a field (total_quantity) is missing]", () => {
         let response;
         let message;

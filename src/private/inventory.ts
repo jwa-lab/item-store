@@ -219,7 +219,10 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
 
                     await updateInventoryItem(inventory_item_id, {
-                        ...inventoryItem.user_id
+                        ...inventoryItem,
+                        data: {
+                            user_id,
+                        }
                     });
 
                     console.log(
@@ -231,7 +234,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             inventory_item_id
                         })
                     );
-                }catch (err) {
+                } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error transfering item for user_id ${user_id} in ${INDEXES.INVENTORY}`,
                         err

@@ -29,6 +29,11 @@ export const warehouseItemSchema = yup.object().shape({
         .defined("The name (string) must be provided."),
     data: yup
         .object()
+        .shape({
+            dataKey: yup.object().shape({
+                dataElement: yup.string().required(),
+            }),
+        })
         .typeError("data must be an object")
         .defined(
             "Some data (object with a string element and a string key) must be provided."

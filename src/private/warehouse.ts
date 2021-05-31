@@ -31,6 +31,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    warehouseItemSchema.isValidSync({});
                     await warehouseItemSchema.validate(item);
 
                     const newItemId = await addWarehouseItem(item);

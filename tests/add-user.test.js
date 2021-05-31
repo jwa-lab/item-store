@@ -125,7 +125,9 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("The user_id must be provided, don't forget it ! ");
+            expect(message).toEqual(
+                "The user_id (string) must be provided."
+            );
         });
     });
 });

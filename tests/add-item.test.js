@@ -126,7 +126,9 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("The total quantity must be provided, don't forget it ! ");
+            expect(message).toEqual(
+                "The total quantity (positive integer) must be provided."
+            );
         });
     });
     describe("When I add a new Item with a Validation Error [a number (total_quantity) is negative]", () => {
@@ -143,7 +145,7 @@ describe("Given Item Store is connected to NATS", () => {
                         XP: "100"
                     },
                     total_quantity: -1000,
-                    available_quantity: 1000,
+                    available_quantity: 1000
                 })
             );
 
@@ -151,7 +153,9 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("The total quantity must be a positive number.");
+            expect(message).toEqual(
+                "The total quantity must be a positive number."
+            );
         });
     });
     describe("When I add a new Item with a Validation Error [a field (name) is wrong-typed]", () => {
@@ -168,7 +172,7 @@ describe("Given Item Store is connected to NATS", () => {
                         XP: "100"
                     },
                     total_quantity: 1000,
-                    available_quantity: 1000,
+                    available_quantity: 1000
                 })
             );
 

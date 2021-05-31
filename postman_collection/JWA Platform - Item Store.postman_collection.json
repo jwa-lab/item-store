@@ -156,6 +156,28 @@
             "response": []
         },
         {
+            "name": "Transfer Inventory Item",
+            "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n    \"user_id\": \"kPwxd3kBKbvuvgx_U_Bj\"\r\n }",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "inventory"]
+                }
+            },
+            "response": []
+        },
+        {
             "name": "Get all items",
             "request": {
                 "method": "GET",

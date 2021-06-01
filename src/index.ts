@@ -17,9 +17,11 @@ import { initElasticSearch, ensureIndexExists } from "./services/elasticSearch";
 import { ensureAdminDoc } from "./services/adminStore";
 
 async function start() {
+
     async function shutdown(exitCode: number) {
         await drain();
         process.exit(exitCode);
+
     }
 
     try {

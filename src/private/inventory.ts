@@ -1,9 +1,13 @@
 import { Subscription } from "nats";
-import { INDEXES } from "../config";
+
+import { INDEXES, SERVICE_NAME } from "../config";
+import { JSONInventoryItem } from "../item";
 import {
     addInventoryItem,
     getInventoryItem,
-    updateInventoryItem
+    getInventoryItemsByUserId,
+    updateInventoryItemData,
+    updateInventoryItemUser
 } from "../services/inventoryItemStore";
 import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import {
@@ -16,6 +20,11 @@ interface AssignItemRequest {
     item_id: number;
 }
 
+interface TransferItemRequest {
+    inventory_item_id: string;
+    user_id: string;   
+}
+
 interface UpdateInventoryItemRequest {
     inventory_item_id: string;
     data: { [k: string]: string };
@@ -23,6 +32,12 @@ interface UpdateInventoryItemRequest {
 
 interface GetInventoryItemRequest {
     inventory_item_id: string;
+}
+
+interface SearchInventoryItemsByUser {
+    user_id: string;
+    start: number;
+    limit: number;
 }
 
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
@@ -82,6 +97,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -97,7 +115,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         inventory_item_id
                     );
 
-                    await updateInventoryItem(inventory_item_id, {
+                    await updateInventoryItemData(inventory_item_id, {
                         ...inventoryItem,
                         data: {
                             ...inventoryItem.data,
@@ -127,6 +145,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -146,6 +167,82 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "get_inventory_items",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { user_id, start, limit } = jsonCodec.decode(
+                    message.data
+                ) as SearchInventoryItemsByUser;
+
+                try {
+                    const inventoryItemsSearchResults = await getInventoryItemsByUserId(
+                        user_id,
+                        start,
+                        limit
+                    );
+
+                    message.respond(
+                        jsonCodec.encode(inventoryItemsSearchResults)
+                    );
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
+    [
+        "transfer_inventory_item",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { inventory_item_id, user_id } = jsonCodec.decode(
+                    message.data
+                ) as TransferItemRequest;
+
+                try {
+
+                    const inventoryItem = await getInventoryItem(
+                        inventory_item_id
+                    );
+
+                    await updateInventoryItemUser(inventory_item_id, {
+                        ...inventoryItem,
+                        user_id
+                    });
+
+                    console.log(
+                        `[ITEM-STORE] Item ${inventory_item_id} transfered to user ${user_id} in ${INDEXES.INVENTORY}`
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            inventory_item_id
+                        })
+                    );
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error transfering item for user_id ${user_id} in ${INDEXES.INVENTORY}`,
                         err
                     );
 

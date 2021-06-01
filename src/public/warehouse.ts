@@ -1,7 +1,14 @@
+import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
+import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 
-import { getConnection, jsonCodec, PublicNatsHandler } from "../services/nats";
+import {
+    AirlockPayload,
+    getConnection,
+    jsonCodec,
+    PublicNatsHandler
+} from "../services/nats";
 
 export const itemPublicHandlers: PublicNatsHandler[] = [
     [
@@ -12,9 +19,13 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
+                    const { body } = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
-                        message.data
+                        jsonCodec.encode(body)
                     );
 
                     message.respond(response.data);
@@ -26,9 +37,43 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
+    [
+        "GET",
+        "item",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                try {
+                    const natsConnection = getConnection();
 
+                    const { query } = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+
+                    const response = await natsConnection.request(
+                        "item-store.get_warehouse_items",
+                        jsonCodec.encode(query)
+                    );
+
+                    const items = jsonCodec.decode(
+                        response.data
+                    ) as SearchResponse<JSONWarehouseItem>[];
+
+                    message.respond(jsonCodec.encode(items));
+                } catch (err) {
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        }
+    ],
     [
         "GET",
         "item.*",
@@ -57,7 +102,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
             }
         }
     ],
-
     [
         "PUT",
         "item.*",
@@ -66,13 +110,16 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
+                    const { body } = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+
                     const urlParameter = String(message.subject).split(".")[2];
 
-                    const data = jsonCodec.decode(
-                        message.data
-                    ) as JSONWarehouseItem;
-
-                    if (data.item_id !== Number(urlParameter)) {
+                    if (
+                        (body as JSONWarehouseItem).item_id !==
+                        Number(urlParameter)
+                    ) {
                         throw new Error(
                             "url parameter and item_id don't match"
                         );
@@ -81,7 +128,7 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     const response = await natsConnection.request(
                         "item-store.update_warehouse_item",
                         jsonCodec.encode({
-                            ...data,
+                            ...(body as JSONWarehouseItem),
                             item_id: Number(urlParameter)
                         })
                     );
@@ -95,6 +142,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

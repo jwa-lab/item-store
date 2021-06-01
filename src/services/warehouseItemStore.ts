@@ -1,15 +1,20 @@
 import { getClient } from "./elasticSearch";
 import { JSONWarehouseItem } from "../item";
 import { INDEXES } from "../config";
-import { getAdminDocField, setAdminDocField } from "./adminStore";
+import { incrementLastWarehouseItemId } from "./adminStore";
+import { SearchResponse } from "elasticsearch";
+
+interface WarehouseItemsSearchResults {
+    total: number;
+    results: JSONWarehouseItem[];
+}
 
 export async function addWarehouseItem(
     data: JSONWarehouseItem
 ): Promise<number> {
     const client = getClient();
 
-    const lastId = await getAdminDocField<number>("last_warehouse_item_id");
-    const newId = lastId + 1;
+    const newId = await incrementLastWarehouseItemId();
 
     await client.index({
         index: INDEXES.WAREHOUSE,
@@ -19,8 +24,6 @@ export async function addWarehouseItem(
             item_id: newId
         }
     });
-
-    await setAdminDocField<number>("last_warehouse_item_id", newId);
 
     return newId;
 }
@@ -34,6 +37,29 @@ export async function getWarehouseItem(id: number): Promise<JSONWarehouseItem> {
     });
 
     return response.body._source;
+}
+
+export async function getWarehouseItems(
+    from: number,
+    size: number
+): Promise<WarehouseItemsSearchResults> {
+    const client = getClient();
+
+    const response = await client.search({
+        index: INDEXES.WAREHOUSE,
+        from,
+        size
+    });
+
+    const responseBody = response.body as SearchResponse<JSONWarehouseItem>;
+
+    const total = responseBody.hits.total;
+    const results = responseBody.hits.hits;
+
+    return {
+        total,
+        results: results.map((result) => result._source)
+    };
 }
 
 export async function updateWarehouseItem(

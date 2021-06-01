@@ -1,16 +1,37 @@
-import { connect, NatsConnection, Subscription, JSONCodec } from "nats";
+import {
+    connect,
+    NatsConnection,
+    Subscription,
+    JSONCodec,
+    SubscriptionOptions
+} from "nats";
 import { NATS_URL } from "../config";
+
+type JSONValue =
+    | string
+    | number
+    | boolean
+    | null
+    | JSONValue[]
+    | { [key: string]: JSONValue };
 
 export type PrivateNatsHandler = [
     topic: string,
-    handler: (subscription: Subscription) => Promise<void>
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
 ];
 
 export type PublicNatsHandler = [
     method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     topic: string,
-    handler: (subscription: Subscription) => Promise<void>
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
 ];
+
+export interface AirlockPayload {
+    body: JSONValue;
+    query: JSONValue;
+}
 
 let natsConnection: NatsConnection;
 
@@ -34,10 +55,10 @@ export function registerPrivateHandlers(
     prefix: string,
     handlers: PrivateNatsHandler[]
 ): void {
-    handlers.map(([subject, handler]) => {
+    handlers.map(([subject, handler, options]) => {
         const fullSubject = `${prefix}.${subject}`;
         console.log(`[ITEM-STORE] Registering private handler ${fullSubject}`);
-        handler(natsConnection.subscribe(fullSubject));
+        handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 
@@ -45,10 +66,10 @@ export function registerPublicHandlers(
     prefix: string,
     handlers: PublicNatsHandler[]
 ): void {
-    handlers.map(([method, subject, handler]) => {
+    handlers.map(([method, subject, handler, options]) => {
         const fullSubject = `${method}:${prefix}.${subject}`;
         console.log(`[ITEM-STORE] Registering public handler ${fullSubject}`);
-        handler(natsConnection.subscribe(fullSubject));
+        handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 

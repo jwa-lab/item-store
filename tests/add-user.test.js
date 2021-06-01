@@ -20,7 +20,7 @@ describe("Given Item Store is connected to NATS", () => {
             response = await natsConnection.request(
                 "item-store.add_user",
                 jsonCodec.encode({
-                    user_id: 12,
+                    user_id:  25,
                     inventory_address: "KT1_SFFG345FFSFdqsfz"
                 })
             );
@@ -44,7 +44,7 @@ describe("Given Item Store is connected to NATS", () => {
 
             it("Then returns the user", () => {
                 expect(jsonCodec.decode(response.data)).toEqual({
-                    user_id: 12,
+                    user_id: 25,
                     inventory_address: "KT1_SFFG345FFSFdqsfz"
                 });
             });
@@ -57,7 +57,7 @@ describe("Given Item Store is connected to NATS", () => {
                     jsonCodec.encode({
                         user_id: documentId,
                         user: {
-                            user_id: 12,
+                            user_id: 25,
                             inventory_address: "KT1_NEWCONTRACTADDRESS123"
                         }
                     })
@@ -82,7 +82,7 @@ describe("Given Item Store is connected to NATS", () => {
 
                 it("Then returns the updated user", () => {
                     expect(jsonCodec.decode(response.data)).toEqual({
-                        user_id: 12,
+                        user_id: 25,
                         inventory_address: "KT1_NEWCONTRACTADDRESS123"
                     });
                 });

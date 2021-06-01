@@ -1,4 +1,5 @@
 import { Subscription } from "nats";
+import { SERVICE_NAME } from "../config";
 
 import {
     AirlockPayload,
@@ -33,6 +34,9 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [
@@ -51,7 +55,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         "item-store.get_inventory_items",
                         jsonCodec.encode({
                             user_id: (body as { user_id: string }).user_id,
-                            ...(query as { start: number, limit: number })
+                            ...(query as { start: number; limit: number })
                         })
                     );
 
@@ -125,6 +129,9 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     );
                 }
             }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ],
     [

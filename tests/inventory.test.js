@@ -161,6 +161,50 @@ describe("Given Inventory is connected to NATS", () => {
                     });
                 });
             });
+
+            describe("And when I transfer the item", () => {
+                beforeAll(async () => {
+                    response = await natsConnection.request(
+                        "item-store.transfer_inventory_item",
+                        jsonCodec.encode({
+                            inventory_item_id: inventoryItemId,
+                            new_user_id: "user_2"
+                        })
+                    );
+                });
+
+                it("Then returns the item id", () => {
+                    expect(
+                        jsonCodec.decode(response.data).inventory_item_id
+                    ).toEqual(inventoryItemId);
+                });
+
+                describe("When I retrieve the item", () => {
+                    let inventoryItem;
+
+                    beforeAll(async () => {
+                        response = await natsConnection.request(
+                            "item-store.get_inventory_item",
+                            jsonCodec.encode({
+                                inventory_item_id: inventoryItemId
+                            })
+                        );
+
+                        inventoryItem = jsonCodec.decode(response.data);
+                    });
+
+                    it("Then returns the updated item", () => {
+                        expect(jsonCodec.decode(response.data)).toEqual({
+                            item_id: warehouseItemId,
+                            user_id: "user_2",
+                            instance_number: 1,
+                            data: {
+                                XP: "3"
+                            }
+                        });
+                    });
+                });
+            });
         });
     });
 });

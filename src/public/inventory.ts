@@ -116,7 +116,47 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         "item-store.update_inventory_item",
                         jsonCodec.encode({
                             inventory_item_id: urlParameter,
-                            body
+                            data: body
+                        })
+                    );
+
+                    message.respond(response.data);
+                } catch (err) {
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        },
+        {
+            queue: SERVICE_NAME
+        }
+    ],
+    [
+        "PATCH",
+        "inventory.*",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                try {
+                    const natsConnection = getConnection();
+
+                    const urlParameter = String(message.subject).split(".")[2];
+
+                    const body = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+
+                    const { new_user_id } = body.body as {
+                        new_user_id: string;
+                    };
+
+                    const response = await natsConnection.request(
+                        "item-store.transfer_inventory_item",
+                        jsonCodec.encode({
+                            inventory_item_id: urlParameter,
+                            new_user_id
                         })
                     );
 

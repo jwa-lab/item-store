@@ -32,7 +32,7 @@ export async function getInventoryItem(id: string): Promise<JSONInventoryItem> {
     return response.body._source;
 }
 
-export async function updateInventoryItem(
+export async function updateInventoryItemData(
     id: string,
     data: JSONInventoryItem
 ): Promise<void> {
@@ -43,6 +43,21 @@ export async function updateInventoryItem(
         id,
         body: {
             doc: data
+        }
+    });
+}
+
+export async function updateInventoryItemUser(
+    id: string,
+    user_id: JSONInventoryItem
+): Promise<void> {
+    const client = getClient();
+
+    await client.update({
+        index: INDEXES.INVENTORY,
+        id,
+        body: {
+            doc: user_id
         }
     });
 }

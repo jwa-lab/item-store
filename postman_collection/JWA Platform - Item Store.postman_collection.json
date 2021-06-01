@@ -162,7 +162,7 @@
                 "header": [],
                 "body": {
                     "mode": "raw",
-                    "raw": "{\r\n    \"user_id\": \"kPwxd3kBKbvuvgx_U_Bj\"\r\n }",
+                    "raw": "{\r\n    \"inventory_item_id\": \"\", \r\n \"user_id\": \"\"\r\n  }",
                     "options": {
                         "raw": {
                             "language": "json"
@@ -170,7 +170,7 @@
                     }
                 },
                 "url": {
-                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/",
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory",
                     "host": ["{{AIRLOCK_URL}}"],
                     "path": ["item-store", "inventory"]
                 }

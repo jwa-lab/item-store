@@ -5,7 +5,8 @@ import {
     addInventoryItem,
     getInventoryItem,
     getInventoryItemsByUserId,
-    updateInventoryItem
+    updateInventoryItemData,
+    updateInventoryItemUser
 } from "../services/inventoryItemStore";
 import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import {
@@ -110,7 +111,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         inventory_item_id
                     );
 
-                    await updateInventoryItem(inventory_item_id, {
+                    await updateInventoryItemData(inventory_item_id, {
                         ...inventoryItem,
                         data: {
                             ...inventoryItem.data,
@@ -218,11 +219,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         inventory_item_id
                     );
 
-                    await updateInventoryItem(inventory_item_id, {
+                    await updateInventoryItemUser(inventory_item_id, {
                         ...inventoryItem,
-                        data: {
-                            user_id,
-                        }
+                        user_id
                     });
 
                     console.log(

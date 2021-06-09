@@ -1,5 +1,5 @@
 import { getClient } from "./elasticSearch";
-import { INDEXES } from "../config";
+import { INDEXES, RETRY_ON_CONFLICT_RETRIES } from "../config";
 
 const ADMIN_DOC_ID = String(0);
 
@@ -20,6 +20,23 @@ export async function ensureAdminDoc(): Promise<void> {
             }
         });
     }
+}
+
+export async function incrementLastWarehouseItemId(): Promise<number> {
+    const client = getClient();
+
+    await client.update({
+        index: INDEXES.ADMIN,
+        id: ADMIN_DOC_ID,
+        retry_on_conflict: RETRY_ON_CONFLICT_RETRIES,
+        body: {
+            script: {
+                source: "ctx._source.last_warehouse_item_id++"
+            }
+        }
+    });
+
+    return getAdminDocField<number>("last_warehouse_item_id");
 }
 
 export async function getAdminDocField<T>(fieldName: string): Promise<T> {

@@ -233,7 +233,7 @@
     "variable": [
         {
             "key": "AIRLOCK_URL",
-            "value": "http://localhost:8000"
+            "value": "http://localhost:8000/api"
         }
     ]
 }

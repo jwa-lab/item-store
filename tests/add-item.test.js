@@ -180,7 +180,7 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("name must be a string");
+            expect(message).toEqual("name must be a string.");
         });
     });
     describe("When I add a new Item with a Validation Error [a field (data) is wrong-typed]", () => {

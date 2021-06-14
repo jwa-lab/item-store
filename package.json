@@ -11,7 +11,10 @@
         "build": "npx tsc",
         "start": "node ./dist/index.js",
         "dev": "concurrently \"npx tsc -w\" \"nodemon dist/index.js\"",
-        "test": "jest tests/"
+        "test": "jest tests/",
+        "test-inventory": "jest tests/inventory.test.js",
+        "test-user": "jest tests/add-user.test.js",
+        "test-item": "jest tests/add-item.test.js"
     },
     "repository": {
         "type": "git",

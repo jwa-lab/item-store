@@ -12,7 +12,13 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
-import { warehouseItemSchema } from "../services/validatorSchema";
+import {
+    WarehouseItemSchema,
+    DataSchema,
+    ItemSpecsSchema,
+    ItemSchema,
+    JsonUserSchema
+} from "../services/validatorSchema";
 
 interface SearchQuery {
     start: number;
@@ -31,8 +37,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    warehouseItemSchema.isValidSync({});
-                    await warehouseItemSchema.validate(item);
+                    await WarehouseItemSchema.validate(item);
 
                     const newItemId = await addWarehouseItem(item);
 
@@ -71,6 +76,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 const { start, limit } = (data as unknown) as SearchQuery;
 
                 try {
+                    await JsonUserSchema.validate({start, limit});
                     const items = await getWarehouseItems(
                         start || 0,
                         limit ? limit : MAX_RESULTS
@@ -101,6 +107,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    await ItemSchema.validate(item_id);
                     const item = await getWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
@@ -128,6 +135,8 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    await ItemSchema.validate(data.item_id);
+                    await WarehouseItemSchema.validate(data);
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

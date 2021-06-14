@@ -11,7 +11,7 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
-import { inventoryItemSchema } from "../services/validatorSchema";
+import { InventorySchema, UserSchema, DataSchema, ItemSpecsSchema, ItemSchema } from "../services/validatorSchema";
 
 interface AssignItemRequest {
     user_id: string;
@@ -38,40 +38,39 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
         "assign_inventory_item",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const { item_id, user_id } = jsonCodec.decode(
+                const { user_id, item_id } = jsonCodec.decode(
                     message.data
                 ) as AssignItemRequest;
 
                 try {
-                    await inventoryItemSchema.validate({ item_id, user_id });
-                    const {
-                        available_quantity,
-                        total_quantity
-                    } = await getWarehouseItem(item_id);
+                    await ItemSchema.validate(item_id);
+                    await UserSchema.validate(user_id);
+                    const data = await getWarehouseItem(item_id);
 
-                    if (available_quantity <= 0) {
+                    if (data.available_quantity <= 0) {
                         throw new Error(`ITEM_SOLD_OUT: ${item_id}`);
                     } else {
                         await updateWarehouseItemField(
                             item_id,
                             "available_quantity",
-                            available_quantity - 1
+                            data.available_quantity - 1
                         );
 
                         const instance_number =
-                            total_quantity - available_quantity + 1;
+                            data.total_quantity - data.available_quantity + 1;
 
                         const inventory_item_id = await addInventoryItem({
                             item_id,
                             user_id,
                             instance_number,
-                            data: {}
+                            data: {},
                         });
 
                         console.log(
                             `[ITEM-STORE] Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`
                         );
 
+                        console.log(inventory_item_id)
                         message.respond(
                             jsonCodec.encode({
                                 inventory_item_id
@@ -105,6 +104,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateInventoryItemRequest;
 
                 try {
+                    await InventorySchema.validate(inventory_item_id);
+                    await DataSchema.validate(data);
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );
@@ -153,6 +154,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetInventoryItemRequest;
 
                 try {
+                    await InventorySchema.validate(inventory_item_id);
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );
@@ -182,6 +184,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as SearchInventoryItemsByUser;
 
                 try {
+                    await UserSchema.validate(user_id);
+                    await ItemSpecsSchema.validate({start, limit});
                     const inventoryItemsSearchResults = await getInventoryItemsByUserId(
                         user_id,
                         start,

@@ -106,7 +106,7 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("user_id must be a number");
+            expect(message).toEqual("user_id must be a number.");
         });
     });
     describe("When I add a new User with a Validation Error [a field (user_id) is missing]", () => {

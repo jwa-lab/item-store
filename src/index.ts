@@ -15,6 +15,7 @@ import {
 } from "./services/nats";
 import { initElasticSearch, ensureIndexExists } from "./services/elasticSearch";
 import { ensureAdminDoc } from "./services/adminStore";
+import { init as initDocs } from "./services/docs";
 
 async function start() {
     async function shutdown(exitCode: number) {
@@ -25,6 +26,7 @@ async function start() {
     try {
         await initNats();
         initElasticSearch();
+        await initDocs();
 
         await ensureIndexExists(INDEXES.ADMIN);
         await ensureAdminDoc();

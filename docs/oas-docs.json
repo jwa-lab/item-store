@@ -1,0 +1,325 @@
+{
+    "tags": [
+        {
+            "name": "warehouse",
+            "description": "A fast and free store for Warehouse items. Warehouse items are prototype items ready to be assigned to users. \n Stage your CRUD operations on items here before committing them to the blockchain.",
+            "externalDocs": {
+                "descritpion": "Warehouse tutorial",
+                "url": "https://jwa-lab.github.io/platform-docs/docs/tutorial/create-an-item"
+            }
+        },
+        {
+            "name": "user",
+            "description": "A fast and free store for Users. Users are internal users associated with a blockchain smart contract. \n Stage your CRUD operations on users here before committing them to the blockchain.",
+            "externalDocs": {
+                "descritpion": "User tutorial",
+                "url": "https://jwa-lab.github.io/platform-docs/docs/tutorial/assign-an-item"
+            }
+        },
+        {
+            "name": "inventory",
+            "description": "A fast and free store for Inventory items. Inventory items are Warehouse items that have been assigned to a user's inventory. \n Stage your CRUD operations on items here before committing them to the blockchain.",
+            "externalDocs": {
+                "description": "Inventory Tutorial",
+                "url": "https://jwa-lab.github.io/platform-docs/docs/tutorial/assign-an-item"
+            }
+        }
+    ],
+    "paths": {
+        "/item-store/item": {
+            "post": {
+                "tags": ["warehouse"],
+                "summary": "Create a new item in the Warehouse.",
+                "operationId": "addWarehouseItem",
+                "requestBody": {
+                    "description": "Create a new item in the Warehouse",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Item"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            },
+            "get": {
+                "tags": ["warehouse"],
+                "summary": "List previously created items from the Warehouse.",
+                "operationId": "getWarehouseItems",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "start index",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "max number of results to return",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ]
+            }
+        },
+        "/item-store/item/{item_id}": {
+            "get": {
+                "tags": ["warehouse"],
+                "summary": "Get a previously created warehouse item given its id.",
+                "operationId": "getWarehouseItem",
+                "parameters": [
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "description": "Id of item to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["warehouse"],
+                "summary": "Update a previously created warehouse item.",
+                "operationId": "updateWarehouseItem",
+                "parameters": [
+                    {
+                        "name": "item_id",
+                        "in": "path",
+                        "description": "Id of item to update",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update an existing warehouse item.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Item"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/item-store/inventory": {
+            "post": {
+                "tags": ["inventory"],
+                "summary": "Assign a warehouse item to a user (assigns an item)",
+                "operationId": "assignInventoryItem",
+                "requestBody": {
+                    "description": "Assigning an item to a user consists in creating an inventory item. \n Once a user has been created, it can be assigned a warehouse item. Given a warehouse item id and a user id, you are able to create an inventory item by decrementing the available quantity for the warehouse item and assign an instance to a user. Note that a user can be assigned multiple warehouse items, as long as there are warehouse items available.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssignItemRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            },
+            "get": {
+                "tags": ["inventory"],
+                "summary": "List inventory items by user id",
+                "operationId": "getInventoryItems",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "start index",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "max number of results to return",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "The internal user id that the inventory items belong to.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/GetInventoryItemsRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/item-store/inventory/{inventory_item_id}": {
+            "get": {
+                "tags": ["inventory"],
+                "summary": "Get an inventory item given its id",
+                "operationId": "getInventoryItem",
+                "parameters": [
+                    {
+                        "name": "inventory_item_id",
+                        "in": "path",
+                        "description": "Id of the inventory item to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["inventory"],
+                "summary": "Update an inventory item given its id",
+                "operationId": "updateInventoryItem",
+                "parameters": [
+                    {
+                        "name": "inventory_item_id",
+                        "in": "path",
+                        "description": "Id of the inventory item to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update an inventory item. Inventory items once created can evolve and have a life of their own. There base attributes won't change as they're forever minted into the corresponding item, but some of those attributes can be set to a new value on the inventory item and they will override the warehouse item's attributes.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateInventoryItemRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/item-store/user": {
+            "post": {
+                "tags": ["user"],
+                "summary": "Create an internal user",
+                "operationId": "addUser",
+                "requestBody": {
+                    "description": "Create a new User. An internal user only tracks a blockchain inventory smart contract. \n This user doesn't store actual user information, another entity, not part of the item store should associate an actual user with this user. The user id can be any number and doesn't need to be unique, it's a field for you to map your own users with our internal users.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    },
+                    "required": true
+                }
+            }
+        },
+        "/item-store/user/{user_id}": {
+            "get": {
+                "tags": ["user"],
+                "summary": "Get a user given its id",
+                "operationId": "getUser",
+                "parameters": [
+                    {
+                        "name": "user_id",
+                        "in": "path",
+                        "description": "Id of the user to retrieve",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "number",
+                        "format": "int64"
+                    }
+                }
+            },
+            "Item": {
+                "type": "object",
+                "properties": {
+                    "no_update_after": {
+                        "type": "string",
+                        "format": "date-time",
+                        "required": false
+                    },
+                    "item_id": {
+                        "type": "number",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
+                    "total_quantity": {
+                        "type": "number",
+                        "format": "int64"
+                    },
+                    "available_quantity": {
+                        "type": "number",
+                        "format": "int64"
+                    }
+                }
+            },
+            "AssignItemRequest": {
+                "type": "object",
+                "properties": {
+                    "item_id": {
+                        "type": "number",
+                        "format": "int64"
+                    },
+                    "user_id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UpdateInventoryItemRequest": {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
+            "GetInventoryItemsRequest": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

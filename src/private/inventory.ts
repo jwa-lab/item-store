@@ -11,7 +11,13 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
-import { InventorySchema, UserSchema, DataSchema, ItemSpecsSchema, ItemSchema } from "../services/validatorSchema";
+import {
+    InventorySchema,
+    UserSchema,
+    DataSchema,
+    ItemSpecsSchema,
+    ItemSchema
+} from "../services/validatorSchema";
 
 interface AssignItemRequest {
     user_id: string;
@@ -43,8 +49,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as AssignItemRequest;
 
                 try {
-                    await ItemSchema.validate(item_id);
-                    await UserSchema.validate(user_id);
+                    await ItemSchema.validate({ item_id });
+                    await UserSchema.validate({ user_id });
                     const data = await getWarehouseItem(item_id);
 
                     if (data.available_quantity <= 0) {
@@ -63,14 +69,13 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             item_id,
                             user_id,
                             instance_number,
-                            data: {},
+                            data: {}
                         });
 
                         console.log(
                             `[ITEM-STORE] Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`
                         );
 
-                        console.log(inventory_item_id)
                         message.respond(
                             jsonCodec.encode({
                                 inventory_item_id
@@ -104,8 +109,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateInventoryItemRequest;
 
                 try {
-                    await InventorySchema.validate(inventory_item_id);
-                    await DataSchema.validate(data);
+                    await InventorySchema.validate({ inventory_item_id });
+                    await DataSchema.validate({ data });
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );
@@ -154,7 +159,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetInventoryItemRequest;
 
                 try {
-                    await InventorySchema.validate(inventory_item_id);
+                    await InventorySchema.validate({ inventory_item_id });
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );
@@ -184,8 +189,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as SearchInventoryItemsByUser;
 
                 try {
-                    await UserSchema.validate(user_id);
-                    await ItemSpecsSchema.validate({start, limit});
+                    await UserSchema.validate({ user_id });
+                    await ItemSpecsSchema.validate({ start, limit });
                     const inventoryItemsSearchResults = await getInventoryItemsByUserId(
                         user_id,
                         start,

@@ -106,10 +106,10 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("user_id must be a number.");
+            expect(message).toEqual("user_id must be an integer.");
         });
     });
-    describe("When I add a new User with a Validation Error [a field (user_id) is missing]", () => {
+    describe("When I add a new User with a Validation Error [a field (inventory_address) is missing]", () => {
         let response;
         let message;
 
@@ -117,7 +117,7 @@ describe("Given Item Store is connected to NATS", () => {
             response = await natsConnection.request(
                 "item-store.add_user",
                 jsonCodec.encode({
-                    inventory_address: "KT1_SFFG345FFSFdqsfz"
+                    user_id: 12
                 })
             );
 
@@ -125,7 +125,9 @@ describe("Given Item Store is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("The user_id (string) must be provided.");
+            expect(message).toEqual(
+                "The inventory_address (string) must be provided."
+            );
         });
     });
 });

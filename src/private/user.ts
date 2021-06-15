@@ -61,7 +61,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetUserRequest;
 
                 try {
-                    await UserSchema.validate(user_id);
+                    await UserSchema.validate({ user_id });
                     const user = await getUser(user_id);
 
                     message.respond(jsonCodec.encode(user));
@@ -89,7 +89,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateUserRequest;
 
                 try {
-                    await UserSchema.validate(user_id);
+                    await UserSchema.validate({ user_id });
                     await JsonUserSchema.validate(user);
                     await updateUser(user_id, user);
 

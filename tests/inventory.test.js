@@ -26,8 +26,8 @@ describe("Given Inventory is connected to NATS", () => {
                     data: {
                         XP: "94"
                     },
-                    total_quantity: 10,
-                    available_quantity: 10
+                    total_quantity: 1,
+                    available_quantity: 1
                 })
             );
 
@@ -42,13 +42,11 @@ describe("Given Inventory is connected to NATS", () => {
             );
 
             inventoryItemId = jsonCodec.decode(response.data).inventory_item_id;
-            console.log(jsonCodec.decode(response.data));
         });
 
         it("Then returns the new inventory item id", () => {
             expect(typeof inventoryItemId).toBe("string");
         });
-    });
 
         describe("When I retrieve the warehouse item", () => {
             let warehouseItem;
@@ -269,6 +267,7 @@ describe("Given Inventory is connected to NATS", () => {
         });
 
         it("Then returns an error", () => {
-            expect(message).toEqual("item_id must be a number.");
+            expect(message).toEqual("item_id must be an integer.");
         });
     });
+});

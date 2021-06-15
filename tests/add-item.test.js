@@ -154,7 +154,7 @@ describe("Given Item Store is connected to NATS", () => {
 
         it("Then returns an error", () => {
             expect(message).toEqual(
-                "total quantity must be a positive number."
+                "total quantity must be a positive integer."
             );
         });
     });
@@ -201,7 +201,6 @@ describe("Given Item Store is connected to NATS", () => {
             );
 
             message = jsonCodec.decode(response.data).error;
-            console.log(message);
         });
 
         it("Then returns an error", () => {

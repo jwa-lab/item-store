@@ -14,10 +14,9 @@ import {
 import { JSONWarehouseItem } from "../item";
 import {
     WarehouseItemSchema,
-    DataSchema,
     ItemSpecsSchema,
     ItemSchema,
-    JsonUserSchema
+    WarehouseItemUpdateSchema
 } from "../services/validatorSchema";
 
 interface SearchQuery {
@@ -76,7 +75,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 const { start, limit } = (data as unknown) as SearchQuery;
 
                 try {
-                    await JsonUserSchema.validate({start, limit});
+                    await ItemSpecsSchema.validate({ start, limit });
                     const items = await getWarehouseItems(
                         start || 0,
                         limit ? limit : MAX_RESULTS
@@ -107,7 +106,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    await ItemSchema.validate(item_id);
+                    await ItemSchema.validate({ item_id });
                     const item = await getWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
@@ -135,8 +134,10 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    await ItemSchema.validate(data.item_id);
-                    await WarehouseItemSchema.validate(data);
+                    const item_id = data.item_id;
+                    await ItemSchema.validate({ item_id });
+                    await WarehouseItemUpdateSchema.validate(data);
+                    //FAIRE LE VALIDATEUR SUR LES CHAMPS DE WAREHOUSE QUI PEUVENT ÊTRE OPTIONNELS
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

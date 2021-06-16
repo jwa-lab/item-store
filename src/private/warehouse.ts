@@ -12,11 +12,90 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
+import { ItemSpecsSchema, ItemSchema } from "../services/validatorSchema";
+import * as yup from "yup";
 
 interface SearchQuery {
     start: number;
     limit: number;
 }
+
+const WarehouseItemSchema = yup.object().shape({
+    name: yup
+        .string()
+        .strict()
+        .typeError("name must be a string.")
+        .defined("The name (string) must be provided."),
+    data: yup.lazy((value) => {
+        if (value === undefined || value === null)
+            return yup
+                .object()
+                .required("The data (object of string(s)) must be provided.");
+        else {
+            const schema = Object.keys(value).reduce(
+                (acc: any, curr: string) => {
+                    acc[curr] = yup
+                        .string()
+                        .strict()
+                        .typeError("data's field must be a string.")
+                        .required(
+                            "The data's field (string) must be provided."
+                        );
+                    return acc;
+                },
+                {}
+            );
+            return yup
+                .object()
+                .shape(schema)
+                .required("The data (object of string(s)) must be provided.");
+        }
+    }),
+    total_quantity: yup
+        .number()
+        .typeError("total_quantity must be an integer.")
+        .min(0)
+        .defined("The total quantity (positive integer) must be provided."),
+    available_quantity: yup
+        .number()
+        .typeError("available_quantity must be an integer.")
+        .min(0)
+        .defined("The available quantity (positive integer) must be provided.")
+});
+
+const WarehouseItemUpdateSchema = yup.object().shape({
+    name: yup.string().strict().typeError("name must be a string.").optional(),
+    data: yup.lazy((value) => {
+        if (value === undefined || value === null)
+            return yup.object().optional();
+        else {
+            const schema = Object.keys(value).reduce(
+                (acc: any, curr: string) => {
+                    acc[curr] = yup
+                        .string()
+                        .strict()
+                        .typeError("data's field must be a string.")
+                        .required(
+                            "The data's field (string) must be provided."
+                        );
+                    return acc;
+                },
+                {}
+            );
+            return yup.object().shape(schema).optional();
+        }
+    }),
+    total_quantity: yup
+        .number()
+        .typeError("total_quantity must be an integer.")
+        .min(0)
+        .optional(),
+    available_quantity: yup
+        .number()
+        .typeError("available_quantity must be an integer.")
+        .min(0)
+        .optional()
+});
 
 const MAX_RESULTS = 100;
 
@@ -30,6 +109,8 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    await WarehouseItemSchema.validate(item);
+
                     const newItemId = await addWarehouseItem(item);
 
                     console.log(
@@ -67,6 +148,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 const { start, limit } = (data as unknown) as SearchQuery;
 
                 try {
+                    await ItemSpecsSchema.validate({ start, limit });
                     const items = await getWarehouseItems(
                         start || 0,
                         limit ? limit : MAX_RESULTS
@@ -97,6 +179,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    await ItemSchema.validate({ item_id });
                     const item = await getWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
@@ -124,6 +207,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
+                    const item_id = data.item_id;
+                    await ItemSchema.validate({ item_id });
+                    await WarehouseItemUpdateSchema.validate(data);
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

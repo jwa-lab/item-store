@@ -27,7 +27,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         "item-store.add_warehouse_item",
                         jsonCodec.encode(body)
                     );
-
                     message.respond(response.data);
                 } catch (err) {
                     message.respond(

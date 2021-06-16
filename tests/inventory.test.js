@@ -123,7 +123,7 @@ describe("Given Inventory is connected to NATS", () => {
                         jsonCodec.encode({
                             inventory_item_id: inventoryItemId,
                             data: {
-                                XP: "3"
+                                "CLUB": "Racing Club Strasbourg"
                             }
                         })
                     );
@@ -155,7 +155,7 @@ describe("Given Inventory is connected to NATS", () => {
                             user_id: "user_1",
                             instance_number: 1,
                             data: {
-                                XP: "3"
+                                "CLUB": "Racing Club Strasbourg"
                             }
                         });
                     });

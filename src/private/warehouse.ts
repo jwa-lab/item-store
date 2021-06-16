@@ -16,7 +16,7 @@ import {
     WarehouseItemSchema,
     ItemSpecsSchema,
     ItemSchema,
-    WarehouseItemUpdateSchema
+    WarehouseItemUpdateSchema, DataSchema
 } from "../services/validatorSchema";
 
 interface SearchQuery {
@@ -137,7 +137,6 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     const item_id = data.item_id;
                     await ItemSchema.validate({ item_id });
                     await WarehouseItemUpdateSchema.validate(data);
-                    //FAIRE LE VALIDATEUR SUR LES CHAMPS DE WAREHOUSE QUI PEUVENT ÊTRE OPTIONNELS
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

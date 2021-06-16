@@ -154,7 +154,7 @@ describe("Given Item Store is connected to NATS", () => {
 
         it("Then returns an error", () => {
             expect(message).toEqual(
-                "total quantity must be a positive integer."
+                "total_quantity must be greater than or equal to 0"
             );
         });
     });
@@ -218,7 +218,7 @@ describe("Given Item Store is connected to NATS", () => {
                     no_update_after: undefined,
                     name: "234",
                     total_quantity: 1000,
-                    available_quantity: 1000
+                    available_quantity: 0,
                 })
             );
 

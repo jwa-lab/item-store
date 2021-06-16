@@ -14,7 +14,7 @@ import {
 import {
     InventorySchema,
     UserSchema,
-    DataSchema,
+    DataUpdateSchema,
     ItemSpecsSchema,
     ItemSchema
 } from "../services/validatorSchema";
@@ -110,7 +110,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     await InventorySchema.validate({ inventory_item_id });
-                    await DataSchema.validate({ data });
+                    await DataUpdateSchema.validate({ data });
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );

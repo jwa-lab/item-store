@@ -2,6 +2,7 @@ FROM node:12-alpine
 
 WORKDIR /app
 
+COPY docs ./docs
 COPY src ./src
 COPY package.json .
 COPY package-lock.json .

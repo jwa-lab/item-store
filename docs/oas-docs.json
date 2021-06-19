@@ -4,7 +4,7 @@
             "name": "warehouse",
             "description": "A fast and free store for Warehouse items. Warehouse items are prototype items ready to be assigned to users. \n Stage your CRUD operations on items here before committing them to the blockchain.",
             "externalDocs": {
-                "descritpion": "Warehouse tutorial",
+                "description": "Warehouse tutorial",
                 "url": "https://jwa-lab.github.io/platform-docs/docs/tutorial/create-an-item"
             }
         },
@@ -12,7 +12,7 @@
             "name": "user",
             "description": "A fast and free store for Users. Users are internal users associated with a blockchain smart contract. \n Stage your CRUD operations on users here before committing them to the blockchain.",
             "externalDocs": {
-                "descritpion": "User tutorial",
+                "description": "User tutorial",
                 "url": "https://jwa-lab.github.io/platform-docs/docs/tutorial/assign-an-item"
             }
         },
@@ -32,15 +32,59 @@
                 "summary": "Create a new item in the Warehouse.",
                 "operationId": "addWarehouseItem",
                 "requestBody": {
-                    "description": "Create a new item in the Warehouse",
+                    "description": "Create a new item in the Warehouse. The item_id will automatically be assigned by the platform.",
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Item"
+                                "type": "object",
+                                "properties": {
+                                    "no_update_after": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "required": false
+                                    },
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "total_quantity": {
+                                        "type": "number",
+                                        "format": "int64"
+                                    },
+                                    "available_quantity": {
+                                        "type": "number",
+                                        "format": "int64"
+                                    }
+                                }
                             }
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "item_id": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             },
             "get": {
@@ -66,7 +110,25 @@
                             "format": "int64"
                         }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Item"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
             }
         },
         "/item-store/item/{item_id}": {
@@ -85,7 +147,22 @@
                             "format": "int64"
                         }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Item"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
             },
             "put": {
                 "tags": ["warehouse"],
@@ -113,6 +190,29 @@
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "item_id": {
+                                            "type": "number"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Url parameter and item_id don't match"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             }
         },
@@ -126,11 +226,41 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/AssignItemRequest"
+                                "type": "object",
+                                "properties": {
+                                    "item_id": {
+                                        "type": "number",
+                                        "format": "int64"
+                                    },
+                                    "user_id": {
+                                        "type": "string"
+                                    }
+                                }
                             }
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "inventory_item_id": {
+                                            "type": "string",
+                                            "format": "document-id"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             },
             "get": {
@@ -162,11 +292,50 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/GetInventoryItemsRequest"
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "string"
+                                    }
+                                }
                             }
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "total": {
+                                            "type": "object",
+                                            "properties": {
+                                                "value": {
+                                                    "type": "number"
+                                                },
+                                                "relation": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryItem"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             }
         },
@@ -185,7 +354,22 @@
                             "type": "string"
                         }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryItem"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
             },
             "put": {
                 "tags": ["inventory"],
@@ -207,11 +391,35 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/UpdateInventoryItemRequest"
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "string"
+                                }
                             }
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "inventory_item_id": {
+                                            "type": "string",
+                                            "format": "document-id"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             }
         },
@@ -225,11 +433,37 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/User"
+                                "type": "object",
+                                "properties": {
+                                    "user_id": {
+                                        "type": "number"
+                                    }
+                                }
                             }
                         }
                     },
                     "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user_id": {
+                                            "type": "string",
+                                            "format": "document-id"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
                 }
             }
         },
@@ -248,7 +482,22 @@
                             "type": "string"
                         }
                     }
-                ]
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
             }
         }
     },
@@ -294,29 +543,21 @@
                     }
                 }
             },
-            "AssignItemRequest": {
+            "InventoryItem": {
                 "type": "object",
                 "properties": {
                     "item_id": {
-                        "type": "number",
-                        "format": "int64"
+                        "type": "number"
                     },
                     "user_id": {
-                        "type": "string"
-                    }
-                }
-            },
-            "UpdateInventoryItemRequest": {
-                "type": "object",
-                "additionalProperties": {
-                    "type": "string"
-                }
-            },
-            "GetInventoryItemsRequest": {
-                "type": "object",
-                "properties": {
-                    "user_id": {
-                        "type": "string"
+                        "type": "string",
+                        "format": "document-id"
+                    },
+                    "instance_number": {
+                        "type": "number"
+                    },
+                    "data": {
+                        "type": "object"
                     }
                 }
             }

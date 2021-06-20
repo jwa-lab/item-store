@@ -1,7 +1,7 @@
 {
     "tags": [
         {
-            "name": "warehouse",
+            "name": "item-store/warehouse",
             "description": "A fast and free store for Warehouse items. Warehouse items are prototype items ready to be assigned to users. \n Stage your CRUD operations on items here before committing them to the blockchain.",
             "externalDocs": {
                 "description": "Warehouse tutorial",
@@ -9,7 +9,7 @@
             }
         },
         {
-            "name": "user",
+            "name": "item-store/user",
             "description": "A fast and free store for Users. Users are internal users associated with a blockchain smart contract. \n Stage your CRUD operations on users here before committing them to the blockchain.",
             "externalDocs": {
                 "description": "User tutorial",
@@ -17,7 +17,7 @@
             }
         },
         {
-            "name": "inventory",
+            "name": "item-store/inventory",
             "description": "A fast and free store for Inventory items. Inventory items are Warehouse items that have been assigned to a user's inventory. \n Stage your CRUD operations on items here before committing them to the blockchain.",
             "externalDocs": {
                 "description": "Inventory Tutorial",
@@ -28,7 +28,7 @@
     "paths": {
         "/item-store/item": {
             "post": {
-                "tags": ["warehouse"],
+                "tags": ["item-store/warehouse"],
                 "summary": "Create a new item in the Warehouse.",
                 "operationId": "addWarehouseItem",
                 "requestBody": {
@@ -88,7 +88,7 @@
                 }
             },
             "get": {
-                "tags": ["warehouse"],
+                "tags": ["item-store/warehouse"],
                 "summary": "List previously created items from the Warehouse.",
                 "operationId": "getWarehouseItems",
                 "parameters": [
@@ -133,7 +133,7 @@
         },
         "/item-store/item/{item_id}": {
             "get": {
-                "tags": ["warehouse"],
+                "tags": ["item-store/warehouse"],
                 "summary": "Get a previously created warehouse item given its id.",
                 "operationId": "getWarehouseItem",
                 "parameters": [
@@ -165,7 +165,7 @@
                 }
             },
             "put": {
-                "tags": ["warehouse"],
+                "tags": ["item-store/warehouse"],
                 "summary": "Update a previously created warehouse item.",
                 "operationId": "updateWarehouseItem",
                 "parameters": [
@@ -218,7 +218,7 @@
         },
         "/item-store/inventory": {
             "post": {
-                "tags": ["inventory"],
+                "tags": ["item-store/inventory"],
                 "summary": "Assign a warehouse item to a user (assigns an item)",
                 "operationId": "assignInventoryItem",
                 "requestBody": {
@@ -264,7 +264,7 @@
                 }
             },
             "get": {
-                "tags": ["inventory"],
+                "tags": ["item-store/inventory"],
                 "summary": "List inventory items by user id",
                 "operationId": "getInventoryItems",
                 "parameters": [
@@ -341,7 +341,7 @@
         },
         "/item-store/inventory/{inventory_item_id}": {
             "get": {
-                "tags": ["inventory"],
+                "tags": ["item-store/inventory"],
                 "summary": "Get an inventory item given its id",
                 "operationId": "getInventoryItem",
                 "parameters": [
@@ -372,7 +372,7 @@
                 }
             },
             "put": {
-                "tags": ["inventory"],
+                "tags": ["item-store/inventory"],
                 "summary": "Update an inventory item given its id",
                 "operationId": "updateInventoryItem",
                 "parameters": [
@@ -425,7 +425,7 @@
         },
         "/item-store/user": {
             "post": {
-                "tags": ["user"],
+                "tags": ["item-store/user"],
                 "summary": "Create an internal user",
                 "operationId": "addUser",
                 "requestBody": {
@@ -469,7 +469,7 @@
         },
         "/item-store/user/{user_id}": {
             "get": {
-                "tags": ["user"],
+                "tags": ["item-store/user"],
                 "summary": "Get a user given its id",
                 "operationId": "getUser",
                 "parameters": [

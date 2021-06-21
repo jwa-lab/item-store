@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="aa6050f6-30d0-4ad9-9932-c19e693117a6" name="Default Changelist" comment="prettier">
+      <change afterPath="$PROJECT_DIR$/src/services/logger.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/private/inventory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/inventory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/private/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/user.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/private/warehouse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/warehouse.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/public/inventory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/public/inventory.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/elasticSearch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/elasticSearch.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/nats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/nats.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="ProjectId" id="1rq6eGQNf7zgwEYWsGTGXiFDUUW" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
+    <property name="settings.editor.selected.configurable" value="settings.nodejs" />
+    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="aa6050f6-30d0-4ad9-9932-c19e693117a6" name="Default Changelist" comment="" />
+      <created>1619691365965</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1619691365965</updated>
+      <workItem from="1619691372781" duration="10500000" />
+      <workItem from="1619868004024" duration="97000" />
+      <workItem from="1619868124650" duration="298000" />
+      <workItem from="1620032974254" duration="602000" />
+      <workItem from="1620042187221" duration="592000" />
+      <workItem from="1620049162899" duration="586000" />
+      <workItem from="1620650087216" duration="820000" />
+      <workItem from="1621253579767" duration="213000" />
+      <workItem from="1621254558746" duration="2755000" />
+      <workItem from="1621330697047" duration="9645000" />
+      <workItem from="1621935966689" duration="6489000" />
+      <workItem from="1622032438634" duration="646000" />
+      <workItem from="1622117448214" duration="68000" />
+      <workItem from="1622122346940" duration="35000" />
+      <workItem from="1622449748131" duration="10516000" />
+      <workItem from="1622706278454" duration="68000" />
+      <workItem from="1622815618692" duration="102000" />
+      <workItem from="1623071502328" duration="4509000" />
+      <workItem from="1623230246019" duration="3591000" />
+      <workItem from="1623311661184" duration="57000" />
+      <workItem from="1623660391889" duration="9642000" />
+      <workItem from="1623751454444" duration="2125000" />
+      <workItem from="1623835342211" duration="189000" />
+      <workItem from="1623836508862" duration="3295000" />
+      <workItem from="1624266602859" duration="726000" />
+      <workItem from="1624267836224" duration="4912000" />
+    </task>
+    <task id="LOCAL-00001" summary="modified gitignore">
+      <created>1619691790317</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1619691790317</updated>
+    </task>
+    <task id="LOCAL-00002" summary="prettier">
+      <created>1623751477757</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1623751477757</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="modified gitignore" />
+    <MESSAGE value="merged with master" />
+    <MESSAGE value="prettier" />
+    <option name="LAST_COMMIT_MESSAGE" value="prettier" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

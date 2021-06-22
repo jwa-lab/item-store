@@ -1,10 +1,13 @@
 import { Subscription } from "nats";
+
 import { INDEXES, SERVICE_NAME } from "../config";
+
 import {
     addInventoryItem,
     getInventoryItem,
     getInventoryItemsByUserId,
-    updateInventoryItem
+    updateInventoryItemData,
+    updateInventoryItemUser
 } from "../services/inventoryItemStore";
 import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import {
@@ -21,6 +24,11 @@ import * as yup from "yup";
 interface AssignItemRequest {
     user_id: string;
     item_id: number;
+}
+
+interface TransferInventoryItemRequest {
+    inventory_item_id: string;
+    new_user_id: string;
 }
 
 interface UpdateInventoryItemRequest {
@@ -144,14 +152,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     const inventoryItem = await getInventoryItem(
                         inventory_item_id
                     );
-
-                    await updateInventoryItem(inventory_item_id, {
-                        ...inventoryItem,
-                        data: {
-                            ...inventoryItem.data,
-                            ...data
-                        }
-                    });
+                    await updateInventoryItemData(inventory_item_id, data);
 
                     console.log(
                         `[ITEM-STORE] Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
@@ -190,11 +191,12 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     await InventorySchema.validate({ inventory_item_id });
-                    const inventoryItem = await getInventoryItem(
+
+                    const inventory_item = await getInventoryItem(
                         inventory_item_id
                     );
 
-                    message.respond(jsonCodec.encode(inventoryItem));
+                    message.respond(jsonCodec.encode(inventory_item));
                 } catch (err) {
                     console.error(
                         `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
@@ -243,6 +245,48 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                     );
                 }
             }
+        }
+    ],
+    [
+        "transfer_inventory_item",
+        async (subscription: Subscription): Promise<void> => {
+            for await (const message of subscription) {
+                const { inventory_item_id, new_user_id } = jsonCodec.decode(
+                    message.data
+                ) as TransferInventoryItemRequest;
+
+                try {
+                    await updateInventoryItemUser(
+                        inventory_item_id,
+                        new_user_id
+                    );
+
+                    console.log(
+                        `[ITEM-STORE] Item ${inventory_item_id} transfered to user ${new_user_id} in ${INDEXES.INVENTORY}`
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            inventory_item_id,
+                            new_user_id
+                        })
+                    );
+                } catch (err) {
+                    console.error(
+                        `[ITEM-STORE] Error transfering item for user_id ${new_user_id} in ${INDEXES.INVENTORY}`,
+                        err
+                    );
+
+                    message.respond(
+                        jsonCodec.encode({
+                            error: err.message
+                        })
+                    );
+                }
+            }
+        },
+        {
+            queue: SERVICE_NAME
         }
     ]
 ];

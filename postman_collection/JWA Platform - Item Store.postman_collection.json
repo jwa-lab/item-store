@@ -126,9 +126,9 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/JnVuOnkB-8XRad6S5ee9",
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/vhRLCnoBcuy8EDd5C2zl",
                     "host": ["{{AIRLOCK_URL}}"],
-                    "path": ["item-store", "inventory", "JnVuOnkB-8XRad6S5ee9"]
+                    "path": ["item-store", "inventory", "vhRLCnoBcuy8EDd5C2zl"]
                 }
             },
             "response": []
@@ -148,9 +148,31 @@
                     }
                 },
                 "url": {
-                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/JnVuOnkB-8XRad6S5ee9",
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/vhRLCnoBcuy8EDd5C2zl",
                     "host": ["{{AIRLOCK_URL}}"],
-                    "path": ["item-store", "inventory", "JnVuOnkB-8XRad6S5ee9"]
+                    "path": ["item-store", "inventory", "vhRLCnoBcuy8EDd5C2zl"]
+                }
+            },
+            "response": []
+        },
+        {
+            "name": "Transfer Inventory Item",
+            "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                    "mode": "raw",
+                    "raw": "{\r\n \"new_user_id\": \"\" \r\n}",
+                    "options": {
+                        "raw": {
+                            "language": "json"
+                        }
+                    }
+                },
+                "url": {
+                    "raw": "{{AIRLOCK_URL}}/item-store/inventory/vhRLCnoBcuy8EDd5C2zl",
+                    "host": ["{{AIRLOCK_URL}}"],
+                    "path": ["item-store", "inventory", "vhRLCnoBcuy8EDd5C2zl"]
                 }
             },
             "response": []

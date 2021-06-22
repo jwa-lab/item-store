@@ -31,6 +31,7 @@ export type PublicNatsHandler = [
 export interface AirlockPayload {
     body: JSONValue;
     query: JSONValue;
+    correlationId: string;
 }
 
 let natsConnection: NatsConnection;

@@ -15,6 +15,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
                 try {
+                    const correlationId = message.headers?.values("Correlationid")[0];
                     const natsConnection = getConnection();
                     const { body } = jsonCodec.decode(
                         message.data
@@ -22,7 +23,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
 
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",
-                        jsonCodec.encode(body)
+                        jsonCodec.encode(body),
                     );
 
                     message.respond(response.data);
@@ -47,6 +48,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
+                    const correlationId = message.headers?.values("Correlationid")[0];
                     const { query, body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
@@ -80,6 +82,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
 
                     const urlParameter = String(message.subject).split(".")[2];
 
+                    const correlationId = message.headers?.values("Correlationid")[0];
                     const response = await natsConnection.request(
                         "item-store.get_inventory_item",
                         jsonCodec.encode({
@@ -108,6 +111,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
 
                     const urlParameter = String(message.subject).split(".")[2];
 
+                    const correlationId = message.headers?.values("Correlationid")[0];
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
@@ -144,6 +148,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
 
                     const urlParameter = String(message.subject).split(".")[2];
 
+                    const correlationId = message.headers?.values("Correlationid")[0];
                     const body = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
@@ -156,7 +161,7 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         "item-store.transfer_inventory_item",
                         jsonCodec.encode({
                             inventory_item_id: urlParameter,
-                            new_user_id
+                            new_user_id,
                         })
                     );
 

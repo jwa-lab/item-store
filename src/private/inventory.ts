@@ -14,6 +14,12 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
+import {
+    UserSchema,
+    ItemSpecsSchema,
+    ItemSchema
+} from "../services/validatorSchema";
+import * as yup from "yup";
 
 interface AssignItemRequest {
     user_id: string;
@@ -40,32 +46,62 @@ interface SearchInventoryItemsByUser {
     limit: number;
 }
 
+const InventorySchema = yup.object({
+    inventory_item_id: yup
+        .string()
+        .strict()
+        .typeError("inventory_item_id must be a string.")
+        .defined("The inventory_item_id (string) must be provided.")
+});
+
+export const DataUpdateSchema = yup.object({
+    data: yup.lazy((value) => {
+        if (value === undefined || value === null)
+            return yup.object().optional();
+        else {
+            const schema = Object.keys(value).reduce(
+                (acc: any, curr: string) => {
+                    acc[curr] = yup
+                        .string()
+                        .strict()
+                        .typeError("data's field must be a string.")
+                        .required(
+                            "The data's field (string) must be provided."
+                        );
+                    return acc;
+                },
+                {}
+            );
+            return yup.object().shape(schema).optional();
+        }
+    })
+});
+
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
         "assign_inventory_item",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const { item_id, user_id } = jsonCodec.decode(
+                const { user_id, item_id } = jsonCodec.decode(
                     message.data
                 ) as AssignItemRequest;
 
                 try {
-                    const {
-                        available_quantity,
-                        total_quantity
-                    } = await getWarehouseItem(item_id);
+                    await ItemSchema.validate({ item_id });
+                    await UserSchema.validate({ user_id });
+                    const data = await getWarehouseItem(item_id);
 
-                    if (available_quantity <= 0) {
+                    if (data.available_quantity <= 0) {
                         throw new Error(`ITEM_SOLD_OUT: ${item_id}`);
                     } else {
                         await updateWarehouseItemField(
                             item_id,
                             "available_quantity",
-                            available_quantity - 1
+                            data.available_quantity - 1
                         );
 
                         const instance_number =
-                            total_quantity - available_quantity + 1;
+                            data.total_quantity - data.available_quantity + 1;
 
                         const inventory_item_id = await addInventoryItem({
                             item_id,
@@ -111,8 +147,10 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateInventoryItemRequest;
 
                 try {
-                    await updateInventoryItemData(inventory_item_id, data);
+                    await InventorySchema.validate({ inventory_item_id });
+                    await DataUpdateSchema.validate({ data });
 
+                    await updateInventoryItemData(inventory_item_id, data);
                     console.log(
                         `[ITEM-STORE] Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
                     );
@@ -149,6 +187,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetInventoryItemRequest;
 
                 try {
+                    await InventorySchema.validate({ inventory_item_id });
                     const inventory_item = await getInventoryItem(
                         inventory_item_id
                     );
@@ -178,6 +217,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as SearchInventoryItemsByUser;
 
                 try {
+                    await UserSchema.validate({ user_id });
+                    await ItemSpecsSchema.validate({ start, limit });
                     const inventoryItemsSearchResults = await getInventoryItemsByUserId(
                         user_id,
                         start,

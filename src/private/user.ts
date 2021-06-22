@@ -3,6 +3,8 @@ import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
+import { UserSchema } from "../services/validatorSchema";
+import * as yup from "yup";
 
 interface GetUserRequest {
     user_id: string;
@@ -13,6 +15,27 @@ interface UpdateUserRequest {
     user: JSONUser;
 }
 
+const CreateUserSchema = yup.object({
+    user_id: yup
+        .number()
+        .typeError("user_id must be an integer.")
+        .min(0)
+        .defined("The user_id (positive integer) must be provided.")
+});
+
+const JsonUserSchema = yup.object({
+    user_id: yup
+        .number()
+        .typeError("user_id must be an integer.")
+        .min(0)
+        .defined("The user_id (positive integer) must be provided."),
+    inventory_address: yup
+        .string()
+        .strict()
+        .typeError("inventory_address must be a string.")
+        .defined("The inventory_address (string) must be provided.")
+});
+
 export const userPrivateHandlers: PrivateNatsHandler[] = [
     [
         "add_user",
@@ -21,6 +44,8 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 const user = jsonCodec.decode(message.data) as JSONUser;
 
                 try {
+                    const user_id = user.user_id;
+                    await CreateUserSchema.validate({ user_id });
                     const newUserId = await addUser(user);
 
                     console.log(
@@ -59,6 +84,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetUserRequest;
 
                 try {
+                    await UserSchema.validate({ user_id });
                     const user = await getUser(user_id);
 
                     message.respond(jsonCodec.encode(user));
@@ -86,6 +112,8 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateUserRequest;
 
                 try {
+                    await UserSchema.validate({ user_id });
+                    await JsonUserSchema.validate(user);
                     await updateUser(user_id, user);
 
                     console.log(

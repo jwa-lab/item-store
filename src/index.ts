@@ -1,10 +1,7 @@
-import { logger } from "./services/logger";
+import { logger, logModel } from "./services/logger";
 
-const logModel = {
-    service: "[ITEM-STORE]",
-    date: new Date(),
-}
-
+logModel.service = "[ITEM-STORE]"
+logModel.date = new Date();
 logger.log({
     level: 'info',
     logInfos: logModel,
@@ -53,6 +50,7 @@ async function start() {
         registerPublicHandlers(SERVICE_NAME, inventoryPublicHandlers);
 
         process.on("SIGINT", () => {
+            logModel.date = new Date();
             logger.log({
                 level: 'info',
                 logInfos: logModel,
@@ -63,6 +61,7 @@ async function start() {
         });
 
         process.on("SIGTERM", () => {
+            logModel.date = new Date();
             logger.log({
                 level: 'info',
                 logInfos: logModel,
@@ -72,6 +71,7 @@ async function start() {
             shutdown(0);
         });
     } catch (err) {
+        logModel.date = new Date();
         logger.log({
             level: 'error',
             logInfos: logModel,

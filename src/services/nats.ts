@@ -5,13 +5,10 @@ import {
     JSONCodec,
     SubscriptionOptions
 } from "nats";
-import { INDEXES, NATS_URL } from "../config";
-import { logger } from "../services/logger";
+import { INDEXES, NATS_URL, SERVICE_NAME } from "../config";
+import { logger, logModel } from "../services/logger";
 
-const logModel = {
-    service: "[ITEM-STORE]",
-    date: new Date(),
-}
+logModel.service = SERVICE_NAME;
 
 type JSONValue =
     | string
@@ -46,6 +43,7 @@ export async function init(): Promise<void> {
         servers: NATS_URL
     });
 
+    logModel.date = new Date();
     logger.log({
         level: 'info',
         logInfos: logModel,
@@ -55,6 +53,7 @@ export async function init(): Promise<void> {
 
     (async () => {
         for await (const status of natsConnection.status()) {
+            logModel.date = new Date();
             logger.log({
                 level: 'info',
                 logInfos: logModel,
@@ -71,6 +70,7 @@ export function registerPrivateHandlers(
 ): void {
     handlers.map(([subject, handler, options]) => {
         const fullSubject = `${prefix}.${subject}`;
+        logModel.date = new Date();
         logger.log({
             level: 'info',
             logInfos: logModel,
@@ -87,6 +87,7 @@ export function registerPublicHandlers(
 ): void {
     handlers.map(([method, subject, handler, options]) => {
         const fullSubject = `${method}:${prefix}.${subject}`;
+        logModel.date = new Date();
         logger.log({
             level: 'info',
             logInfos: logModel,
@@ -98,6 +99,7 @@ export function registerPublicHandlers(
 }
 
 export function drain(): Promise<void> {
+    logModel.date = new Date();
     logger.log({
         level: 'info',
         logInfos: logModel,

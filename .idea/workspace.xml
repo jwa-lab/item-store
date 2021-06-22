@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aa6050f6-30d0-4ad9-9932-c19e693117a6" name="Default Changelist" comment="prettier">
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/item-store.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/private/inventory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/inventory.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/private/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/user.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/private/warehouse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/warehouse.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/logger.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/logger.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/elasticSearch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/elasticSearch.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/nats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/nats.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

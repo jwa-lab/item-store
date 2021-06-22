@@ -1,17 +1,15 @@
 import { Client } from "@elastic/elasticsearch";
-import { ELASTICSEARCH_URI, INDEXES } from "../config";
-import { logger } from "../services/logger";
+import { ELASTICSEARCH_URI, INDEXES, SERVICE_NAME } from "../config";
+import { logger, logModel } from "../services/logger";
 
-const logModel = {
-    service: "[ITEM-STORE]",
-    date: new Date(),
-}
+logModel.service = SERVICE_NAME;
 
 let client: Client;
 
 export function initElasticSearch(): void {
     client = new Client({ node: ELASTICSEARCH_URI });
 
+    logModel.date = new Date();
     logger.log({
         level: 'info',
         logInfos: logModel,

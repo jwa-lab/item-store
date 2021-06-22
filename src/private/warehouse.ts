@@ -12,7 +12,7 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
-import { logger } from "../services/logger";
+import { logger, logModel } from "../services/logger";
 
 interface SearchQuery {
     start: number;
@@ -21,10 +21,7 @@ interface SearchQuery {
 
 const MAX_RESULTS = 100;
 
-const logModel = {
-    service: "[ITEM-STORE]",
-    date: new Date(),
-}
+logModel.service = SERVICE_NAME;
 
 export const warehousePrivateHandlers: PrivateNatsHandler[] = [
     [

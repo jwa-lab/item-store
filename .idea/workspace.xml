@@ -2,15 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="aa6050f6-30d0-4ad9-9932-c19e693117a6" name="Default Changelist" comment="prettier">
-      <change afterPath="$PROJECT_DIR$/src/services/logger.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/item-store.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/private/inventory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/inventory.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/private/user.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/user.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/private/warehouse.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/private/warehouse.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/public/inventory.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/public/inventory.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/elasticSearch.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/elasticSearch.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/nats.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/nats.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/services/logger.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/logger.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +37,7 @@
     </file-type-list>
   </component>
   <component name="ProjectId" id="1rq6eGQNf7zgwEYWsGTGXiFDUUW" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -52,7 +54,7 @@
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="prettierjs.PrettierConfiguration.Package" value="$PROJECT_DIR$/node_modules/prettier" />
     <property name="settings.editor.selected.configurable" value="settings.nodejs" />
-    <property name="ts.external.directory.path" value="$PROJECT_DIR$/node_modules/typescript/lib" />
+    <property name="ts.external.directory.path" value="$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -89,6 +91,7 @@
       <workItem from="1623836508862" duration="3295000" />
       <workItem from="1624266602859" duration="726000" />
       <workItem from="1624267836224" duration="4912000" />
+      <workItem from="1624351170136" duration="492000" />
     </task>
     <task id="LOCAL-00001" summary="modified gitignore">
       <created>1619691790317</created>

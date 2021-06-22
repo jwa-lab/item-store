@@ -6,3 +6,8 @@ export const logger = winston.createLogger({
         new winston.transports.Console(),
     ],
 })
+
+export const logModel = {
+    service: "",
+    date: new Date(),
+}

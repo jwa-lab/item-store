@@ -11,7 +11,7 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
-import { logger } from "../services/logger";
+import { logger, logModel } from "../services/logger";
 
 interface AssignItemRequest {
     user_id: string;
@@ -32,11 +32,7 @@ interface SearchInventoryItemsByUser {
     start: number;
     limit: number;
 }
-
-const logModel = {
-    service: "[ITEM-STORE]",
-    date: new Date(),
-}
+logModel.service = SERVICE_NAME;
 
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
@@ -72,6 +68,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             data: {}
                         });
 
+                        logModel.date = new Date();
                         logger.log({
                             level: 'info',
                             logInfos: logModel,
@@ -86,6 +83,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         );
                     }
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,
@@ -127,6 +125,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         }
                     });
 
+                    logModel.date = new Date();
                     logger.log({
                         level: 'info',
                         logInfos: logModel,
@@ -140,6 +139,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,
@@ -175,6 +175,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(inventoryItem));
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,
@@ -211,6 +212,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         jsonCodec.encode(inventoryItemsSearchResults)
                     );
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,

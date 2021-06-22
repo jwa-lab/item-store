@@ -3,7 +3,7 @@ import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
-import { logger } from "../services/logger";
+import { logger, logModel } from "../services/logger";
 
 interface GetUserRequest {
     user_id: string;
@@ -14,10 +14,7 @@ interface UpdateUserRequest {
     user: JSONUser;
 }
 
-const logModel = {
-    service: "[USER-STORE]",
-    date: new Date(),
-}
+logModel.service = SERVICE_NAME;
 
 export const userPrivateHandlers: PrivateNatsHandler[] = [
     [
@@ -29,6 +26,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     const newUserId = await addUser(user);
 
+                    logModel.date = new Date();
                     logger.log({
                         level: 'info',
                         logInfos: logModel,
@@ -42,6 +40,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,
@@ -74,6 +73,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(user));
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,
@@ -102,6 +102,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateUser(user_id, user);
 
+                    logModel.date = new Date();
                     logger.log({
                         level: 'info',
                         logInfos: logModel,
@@ -114,6 +115,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
+                    logModel.date = new Date();
                     logger.log({
                         level: 'error',
                         logInfos: logModel,

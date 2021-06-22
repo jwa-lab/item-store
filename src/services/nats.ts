@@ -5,7 +5,13 @@ import {
     JSONCodec,
     SubscriptionOptions
 } from "nats";
-import { NATS_URL } from "../config";
+import { INDEXES, NATS_URL } from "../config";
+import { logger } from "../services/logger";
+
+const logModel = {
+    service: "[ITEM-STORE]",
+    date: new Date(),
+}
 
 type JSONValue =
     | string
@@ -40,13 +46,21 @@ export async function init(): Promise<void> {
         servers: NATS_URL
     });
 
-    console.info(
-        `[ITEM-STORE] Connected to Nats on ${natsConnection.getServer()}`
-    );
+    logger.log({
+        level: 'info',
+        logInfos: logModel,
+        message: `Connected to Nats on ${natsConnection.getServer()}`,
+        correlationId: '123',
+    });
 
     (async () => {
         for await (const status of natsConnection.status()) {
-            console.info(`${status.type}: ${JSON.stringify(status.data)}`);
+            logger.log({
+                level: 'info',
+                logInfos: logModel,
+                message: `${status.type}: ${JSON.stringify(status.data)}`,
+                correlationId: '123',
+            });
         }
     })().then();
 }
@@ -57,7 +71,12 @@ export function registerPrivateHandlers(
 ): void {
     handlers.map(([subject, handler, options]) => {
         const fullSubject = `${prefix}.${subject}`;
-        console.log(`[ITEM-STORE] Registering private handler ${fullSubject}`);
+        logger.log({
+            level: 'info',
+            logInfos: logModel,
+            message: `Registering private handler ${fullSubject}`,
+            correlationId: '123',
+        });
         handler(natsConnection.subscribe(fullSubject, options));
     });
 }
@@ -68,13 +87,23 @@ export function registerPublicHandlers(
 ): void {
     handlers.map(([method, subject, handler, options]) => {
         const fullSubject = `${method}:${prefix}.${subject}`;
-        console.log(`[ITEM-STORE] Registering public handler ${fullSubject}`);
+        logger.log({
+            level: 'info',
+            logInfos: logModel,
+            message: `Registering public handler ${fullSubject}`,
+            correlationId: '123',
+        });
         handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 
 export function drain(): Promise<void> {
-    console.log(`[ITEM-STORE] Draining connection to NATS server ${NATS_URL}`);
+    logger.log({
+        level: 'info',
+        logInfos: logModel,
+        message: `Draining connection to NATS server ${NATS_URL}`,
+        correlationId: '123',
+    });
     return natsConnection.drain();
 }
 

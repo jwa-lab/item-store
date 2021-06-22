@@ -14,6 +14,7 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
+import { logger, logModel } from "../services/logger";
 
 interface AssignItemRequest {
     user_id: string;
@@ -39,6 +40,7 @@ interface SearchInventoryItemsByUser {
     start: number;
     limit: number;
 }
+logModel.service = SERVICE_NAME;
 
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
@@ -74,9 +76,13 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             data: {}
                         });
 
-                        console.log(
-                            `[ITEM-STORE] Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`
-                        );
+                        logModel.date = new Date();
+                        logger.log({
+                            level: 'info',
+                            logInfos: logModel,
+                            message: `Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`,
+                            correlationId: "111",
+                        });
 
                         message.respond(
                             jsonCodec.encode({
@@ -85,10 +91,14 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         );
                     }
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error assigning item ${item_id} to user ${user_id} in ${INDEXES.INVENTORY}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message:`Error assigning item ${item_id} to user ${user_id} in ${INDEXES.INVENTORY}`,
+                        correlationId: "112",
+                        error: err,
+                });
 
                     message.respond(
                         jsonCodec.encode({
@@ -113,9 +123,13 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateInventoryItemData(inventory_item_id, data);
 
-                    console.log(
-                        `[ITEM-STORE] Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'info',
+                        logInfos: logModel,
+                        message: `Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`,
+                        correlationId: "113",
+                });
 
                     message.respond(
                         jsonCodec.encode({
@@ -123,10 +137,14 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error updating item ${inventory_item_id} in ${INDEXES.INVENTORY}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error updating item ${inventory_item_id} in ${INDEXES.INVENTORY}`,
+                        correlationId: "114",
+                        error: err,
+                });
 
                     message.respond(
                         jsonCodec.encode({
@@ -155,10 +173,14 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(inventory_item));
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
+                        correlationId: "115",
+                        error: err,
+                    });
 
                     message.respond(
                         jsonCodec.encode({
@@ -188,10 +210,14 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         jsonCodec.encode(inventoryItemsSearchResults)
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
+                        correlationId: "116",
+                        error: err,
+                    });
 
                     message.respond(
                         jsonCodec.encode({

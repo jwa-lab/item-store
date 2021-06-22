@@ -1,14 +1,23 @@
 import { Client } from "@elastic/elasticsearch";
-import { ELASTICSEARCH_URI } from "../config";
+import { ELASTICSEARCH_URI, INDEXES } from "../config";
+import { logger } from "../services/logger";
+
+const logModel = {
+    service: "[ITEM-STORE]",
+    date: new Date(),
+}
 
 let client: Client;
 
 export function initElasticSearch(): void {
     client = new Client({ node: ELASTICSEARCH_URI });
 
-    console.log(
-        `[ITEM-STORE] Connected to ElasticSearch on ${ELASTICSEARCH_URI}`
-    );
+    logger.log({
+        level: 'info',
+        logInfos: logModel,
+        message: `[ITEM-STORE] Connected to ElasticSearch on ${ELASTICSEARCH_URI}`,
+        correlationId: '123',
+    });
 }
 
 export async function ensureIndexExists(indexName: string): Promise<void> {

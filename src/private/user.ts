@@ -3,6 +3,7 @@ import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
+import { logger, logModel } from "../services/logger";
 
 interface GetUserRequest {
     user_id: string;
@@ -12,6 +13,8 @@ interface UpdateUserRequest {
     user_id: string;
     user: JSONUser;
 }
+
+logModel.service = SERVICE_NAME;
 
 export const userPrivateHandlers: PrivateNatsHandler[] = [
     [
@@ -23,9 +26,13 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     const newUserId = await addUser(user);
 
-                    console.log(
-                        `[USER-STORE] User added to ${INDEXES.USER} with id ${newUserId}`
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'info',
+                        logInfos: logModel,
+                        message: `User added to ${INDEXES.USER} with id ${newUserId}`,
+                        correlationId: "121",
+                    });
 
                     message.respond(
                         jsonCodec.encode({
@@ -33,11 +40,14 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error adding user to ${INDEXES.USER}`,
-                        err
-                    );
-
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error adding user to ${INDEXES.USER}`,
+                        correlationId: "120",
+                        error: err,
+                    });
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -63,10 +73,14 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(user));
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error getting user ${user_id} from ${INDEXES.USER}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error getting user ${user_id} from ${INDEXES.USER}`,
+                        correlationId: "119",
+                        error: err,
+                    });
 
                     message.respond(
                         jsonCodec.encode({
@@ -88,20 +102,27 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateUser(user_id, user);
 
-                    console.log(
-                        `[USER-STORE] User ${user_id} updated in ${INDEXES.USER}`
-                    );
-
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'info',
+                        logInfos: logModel,
+                        message: `User ${user_id} updated in ${INDEXES.USER}`,
+                        correlationId: "118"
+                    });
                     message.respond(
                         jsonCodec.encode({
                             user_id
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error updating user ${user_id} in ${INDEXES.USER}`,
-                        err
-                    );
+                    logModel.date = new Date();
+                    logger.log({
+                        level: 'error',
+                        logInfos: logModel,
+                        message: `Error updating user ${user_id} in ${INDEXES.USER}`,
+                        correlationId: "117",
+                        error: err,
+                    });
 
                     message.respond(
                         jsonCodec.encode({

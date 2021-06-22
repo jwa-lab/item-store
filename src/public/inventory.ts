@@ -19,7 +19,6 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
-
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",
                         jsonCodec.encode(body)

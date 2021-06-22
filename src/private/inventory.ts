@@ -187,7 +187,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetInventoryItemRequest;
 
                 try {
-                    //await InventorySchema.validate({ inventory_item_id });
+                    await InventorySchema.validate({ inventory_item_id });
                     const inventory_item = await getInventoryItem(
                         inventory_item_id
                     );

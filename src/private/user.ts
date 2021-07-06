@@ -18,6 +18,7 @@ interface UpdateUserRequest {
 const CreateUserSchema = yup.object({
     user_id: yup
         .number()
+        .strict()
         .typeError("user_id must be an integer.")
         .min(0)
         .defined("The user_id (positive integer) must be provided.")
@@ -26,6 +27,7 @@ const CreateUserSchema = yup.object({
 const JsonUserSchema = yup.object({
     user_id: yup
         .number()
+        .strict()
         .typeError("user_id must be an integer.")
         .min(0)
         .defined("The user_id (positive integer) must be provided."),

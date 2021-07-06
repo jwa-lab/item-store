@@ -65,11 +65,14 @@ describe("Given Item Store is connected to NATS", () => {
                 response = await natsConnection.request(
                     "item-store.update_warehouse_item",
                     jsonCodec.encode({
+                        name: "Lionel Messi",
                         no_update_after: undefined,
                         item_id: item_id,
                         data: {
                             XP: "80"
-                        }
+                        },
+                        total_quantity: 1000,
+                        available_quantity: 1000
                     })
                 );
             });
@@ -93,7 +96,7 @@ describe("Given Item Store is connected to NATS", () => {
                 it("Then returns the updated item", () => {
                     expect(jsonCodec.decode(response.data)).toEqual({
                         item_id: item_id,
-                        name: "Christiano Ronaldo",
+                        name: "Lionel Messi",
                         data: {
                             XP: "80"
                         },

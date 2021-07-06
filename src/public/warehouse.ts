@@ -115,6 +115,10 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
 
                     const urlParameter = String(message.subject).split(".")[2];
 
+                    if (urlParameter === null)
+                        throw new Error(
+                            "item_id must be provided in the url parameter"
+                        );
                     if (
                         (body as JSONWarehouseItem).item_id !==
                         Number(urlParameter)

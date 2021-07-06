@@ -12,7 +12,7 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
-import { ItemSpecsSchema, ItemSchema } from "../services/validatorSchema";
+import { SearchParamsRequest, SearchByUserIdRequest } from "../services/validatorSchema";
 import * as yup from "yup";
 
 interface SearchQuery {
@@ -53,11 +53,13 @@ const WarehouseItemSchema = yup.object().shape({
     }),
     total_quantity: yup
         .number()
+        .strict()
         .typeError("total_quantity must be an integer.")
         .min(0)
         .defined("The total quantity (positive integer) must be provided."),
     available_quantity: yup
         .number()
+        .strict()
         .typeError("available_quantity must be an integer.")
         .min(0)
         .defined("The available quantity (positive integer) must be provided.")
@@ -147,11 +149,12 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 const data = jsonCodec.decode(message.data) as AirlockPayload;
                 const { start, limit } = (data as unknown) as SearchQuery;
 
+                const args = {start : Number(start), limit : Number(limit)};
                 try {
-                    await ItemSpecsSchema.validate({ start, limit });
+                    await SearchParamsRequest.validate(args);
                     const items = await getWarehouseItems(
-                        start || 0,
-                        limit ? limit : MAX_RESULTS
+                        args.start || 0,
+                        args.limit ? args.limit : MAX_RESULTS
                     );
 
                     message.respond(jsonCodec.encode(items));
@@ -179,7 +182,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    await ItemSchema.validate({ item_id });
+                    await SearchByUserIdRequest.validate({ item_id });
                     const item = await getWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
@@ -208,8 +211,8 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     const item_id = data.item_id;
-                    await ItemSchema.validate({ item_id });
-                    await WarehouseItemUpdateSchema.validate(data);
+                    await SearchByUserIdRequest.validate({ item_id });
+                    await WarehouseItemSchema.validate(data);
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

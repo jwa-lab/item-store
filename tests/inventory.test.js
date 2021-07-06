@@ -124,7 +124,7 @@ describe("Given Inventory is connected to NATS", () => {
                             inventory_item_id: inventoryItemId,
                             data: {
                                 CLUB: "Racing Club Strasbourg"
-                            }
+                            },
                         })
                     );
                 });

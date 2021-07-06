@@ -117,22 +117,9 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "value": {
-                                                "type": "number"
-                                            },
-                                            "relation": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/Item"
-                                            }
-                                        }
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Item"
                                     }
                                 }
                             }
@@ -422,64 +409,6 @@
                                     "type": "object",
                                     "properties": {
                                         "inventory_item_id": {
-                                            "type": "string",
-                                            "format": "document-id"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Server error"
-                    }
-                }
-            },
-            "patch": {
-                "tags": ["item-store/inventory"],
-                "summary": "Transfer an item to another user",
-                "operationId": "transferInventoryItem",
-                "parameters": [
-                    {
-                        "name": "inventory_item_id",
-                        "in": "path",
-                        "description": "Id of the inventory item to update",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "description": "Transfer an inventory item.",
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "new_user_id": {
-                                        "type": "string",
-                                        "format": "document-id"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "required": true
-                },
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "inventory_item_id": {
-                                            "type": "string",
-                                            "format": "document-id"
-                                        },
-                                        "new_user_id": {
                                             "type": "string",
                                             "format": "document-id"
                                         }

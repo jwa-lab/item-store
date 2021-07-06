@@ -16,8 +16,8 @@ import {
 } from "../services/warehouseItemStore";
 import {
     UserSchema,
-    ItemSpecsSchema,
-    ItemSchema
+    SearchParamsRequest,
+    SearchByUserIdRequest
 } from "../services/validatorSchema";
 import * as yup from "yup";
 
@@ -57,7 +57,7 @@ const InventorySchema = yup.object({
 export const DataUpdateSchema = yup.object({
     data: yup.lazy((value) => {
         if (value === undefined || value === null)
-            return yup.object().optional();
+            return yup.object().required("The data (object of string) must be provided.");
         else {
             const schema = Object.keys(value).reduce(
                 (acc: any, curr: string) => {
@@ -72,7 +72,7 @@ export const DataUpdateSchema = yup.object({
                 },
                 {}
             );
-            return yup.object().shape(schema).optional();
+            return yup.object().shape(schema).required("The data (object of string) must be provided.");
         }
     })
 });
@@ -87,7 +87,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as AssignItemRequest;
 
                 try {
-                    await ItemSchema.validate({ item_id });
+                    await SearchByUserIdRequest.validate({ item_id });
                     await UserSchema.validate({ user_id });
                     const data = await getWarehouseItem(item_id);
 
@@ -148,7 +148,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     await InventorySchema.validate({ inventory_item_id });
-                    await DataUpdateSchema.validate({ data });
+                    await DataUpdateSchema.validate({data});
 
                     await updateInventoryItemData(inventory_item_id, data);
                     console.log(
@@ -217,12 +217,13 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as SearchInventoryItemsByUser;
 
                 try {
+                    const args = {start : Number(start), limit : Number(limit)};
                     await UserSchema.validate({ user_id });
-                    await ItemSpecsSchema.validate({ start, limit });
+                    await SearchParamsRequest.validate(args);
                     const inventoryItemsSearchResults = await getInventoryItemsByUserId(
                         user_id,
-                        start,
-                        limit
+                        args.start,
+                        args.limit
                     );
 
                     message.respond(

@@ -1,4 +1,7 @@
 import { Subscription } from "nats";
+import * as yup from "yup";
+import { ObjectShape } from "yup/lib/object";
+
 import {
     AirlockPayload,
     jsonCodec,
@@ -12,8 +15,10 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
-import { SearchParamsRequest, SearchByUserIdRequest } from "../services/validatorSchema";
-import * as yup from "yup";
+import {
+    SearchParamsRequest,
+    SearchByUserIdRequest
+} from "../services/validatorSchema";
 
 interface SearchQuery {
     start: number;
@@ -27,13 +32,13 @@ const WarehouseItemSchema = yup.object().shape({
         .typeError("name must be a string.")
         .defined("The name (string) must be provided."),
     data: yup.lazy((value) => {
-        if (value === undefined || value === null)
+        if (value === undefined || value === null) {
             return yup
                 .object()
                 .required("The data (object of string(s)) must be provided.");
-        else {
+        } else {
             const schema = Object.keys(value).reduce(
-                (acc: any, curr: string) => {
+                (acc: ObjectShape, curr: string) => {
                     acc[curr] = yup
                         .string()
                         .strict()
@@ -45,6 +50,7 @@ const WarehouseItemSchema = yup.object().shape({
                 },
                 {}
             );
+
             return yup
                 .object()
                 .shape(schema)
@@ -115,7 +121,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 const data = jsonCodec.decode(message.data) as AirlockPayload;
                 const { start, limit } = (data as unknown) as SearchQuery;
 
-                const args = {start : Number(start), limit : Number(limit)};
+                const args = { start: Number(start), limit: Number(limit) };
                 try {
                     await SearchParamsRequest.validate(args);
                     const items = await getWarehouseItems(

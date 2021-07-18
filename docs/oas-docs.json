@@ -53,12 +53,14 @@
                                         }
                                     },
                                     "total_quantity": {
-                                        "type": "number",
-                                        "format": "int64"
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "example": 10
                                     },
                                     "available_quantity": {
-                                        "type": "number",
-                                        "format": "int64"
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "exmaple": 10
                                     }
                                 }
                             }
@@ -75,7 +77,7 @@
                                     "type": "object",
                                     "properties": {
                                         "item_id": {
-                                            "type": "number"
+                                            "type": "integer"
                                         }
                                     }
                                 }
@@ -98,7 +100,8 @@
                         "description": "start index",
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 0,
+                            "example": 0
                         }
                     },
                     {
@@ -107,7 +110,8 @@
                         "description": "max number of results to return",
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 1,
+                            "example": 100
                         }
                     }
                 ],
@@ -117,9 +121,25 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/Item"
+                                    "type": "object",
+                                    "properties": {
+                                        "total": {
+                                            "value": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "example": 3
+                                            },
+                                            "relation": {
+                                                "type": "string",
+                                                "example": "eq"
+                                            }
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Item"
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -144,7 +164,8 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 1,
+                            "example": 167
                         }
                     }
                 ],
@@ -176,7 +197,8 @@
                         "required": true,
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 1,
+                            "example": 167
                         }
                     }
                 ],
@@ -200,7 +222,7 @@
                                     "type": "object",
                                     "properties": {
                                         "item_id": {
-                                            "type": "number"
+                                            "type": "integer"
                                         }
                                     }
                                 }
@@ -229,11 +251,14 @@
                                 "type": "object",
                                 "properties": {
                                     "item_id": {
-                                        "type": "number",
-                                        "format": "int64"
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "example": 167
                                     },
                                     "user_id": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "format": "document-id",
+                                        "example": "Su9ou3oBhOQfbPX0feBE"
                                     }
                                 }
                             }
@@ -251,7 +276,8 @@
                                     "properties": {
                                         "inventory_item_id": {
                                             "type": "string",
-                                            "format": "document-id"
+                                            "format": "document-id",
+                                            "example": "Su9ou3oBhOQfbPX0feBE"
                                         }
                                     }
                                 }
@@ -274,7 +300,8 @@
                         "description": "start index",
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 0,
+                            "example": 0
                         }
                     },
                     {
@@ -283,7 +310,8 @@
                         "description": "max number of results to return",
                         "schema": {
                             "type": "integer",
-                            "format": "int64"
+                            "minimum": 1,
+                            "example": 100
                         }
                     }
                 ],
@@ -295,7 +323,9 @@
                                 "type": "object",
                                 "properties": {
                                     "user_id": {
-                                        "type": "string"
+                                        "type": "integer",
+                                        "example": 42,
+                                        "minimum": 0
                                     }
                                 }
                             }
@@ -315,10 +345,13 @@
                                             "type": "object",
                                             "properties": {
                                                 "value": {
-                                                    "type": "number"
+                                                    "type": "integer",
+                                                    "minimum": 0,
+                                                    "example": 3
                                                 },
                                                 "relation": {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "example": "eq"
                                                 }
                                             }
                                         },
@@ -351,7 +384,9 @@
                         "description": "Id of the inventory item to retrieve",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "document-id",
+                            "example": "eu90u3oBhOQfbPX0juGL"
                         }
                     }
                 ],
@@ -382,7 +417,9 @@
                         "description": "Id of the inventory item to update",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "document-id",
+                            "example": "eu90u3oBhOQfbPX0juGL"
                         }
                     }
                 ],
@@ -410,7 +447,71 @@
                                     "properties": {
                                         "inventory_item_id": {
                                             "type": "string",
-                                            "format": "document-id"
+                                            "format": "document-id",
+                                            "example": "eu90u3oBhOQfbPX0juGL"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            },
+            "patch": {
+                "tags": ["item-store/inventory"],
+                "summary": "Transfer an item to another user",
+                "operationId": "transferInventoryItem",
+                "parameters": [
+                    {
+                        "name": "inventory_item_id",
+                        "in": "path",
+                        "description": "Id of the inventory item to update",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "document-id",
+                            "example": "eu90u3oBhOQfbPX0juGL"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Transfer an inventory item.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "new_user_id": {
+                                        "type": "string",
+                                        "format": "document-id",
+                                        "example": "nO91u3oBhOQfbPX02OFk"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "inventory_item_id": {
+                                            "type": "string",
+                                            "format": "document-id",
+                                            "example": "eu90u3oBhOQfbPX0juGL"
+                                        },
+                                        "new_user_id": {
+                                            "type": "string",
+                                            "format": "document-id",
+                                            "example": "nO91u3oBhOQfbPX02OFk"
                                         }
                                     }
                                 }
@@ -436,7 +537,9 @@
                                 "type": "object",
                                 "properties": {
                                     "user_id": {
-                                        "type": "number"
+                                        "type": "integer",
+                                        "example": 42,
+                                        "minimum": 0
                                     }
                                 }
                             }
@@ -454,7 +557,8 @@
                                     "properties": {
                                         "user_id": {
                                             "type": "string",
-                                            "format": "document-id"
+                                            "format": "document-id",
+                                            "example": "Su9ou3oBhOQfbPX0feBE"
                                         }
                                     }
                                 }
@@ -479,7 +583,9 @@
                         "description": "Id of the user to retrieve",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "type": "string",
+                            "format": "document-id",
+                            "example": "nO91u3oBhOQfbPX02OFk"
                         }
                     }
                 ],
@@ -507,8 +613,9 @@
                 "type": "object",
                 "properties": {
                     "user_id": {
-                        "type": "number",
-                        "format": "int64"
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 42
                     }
                 }
             },
@@ -521,8 +628,9 @@
                         "required": false
                     },
                     "item_id": {
-                        "type": "number",
-                        "format": "int64"
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 167
                     },
                     "name": {
                         "type": "string"
@@ -534,12 +642,14 @@
                         }
                     },
                     "total_quantity": {
-                        "type": "number",
-                        "format": "int64"
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 10
                     },
                     "available_quantity": {
-                        "type": "number",
-                        "format": "int64"
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 10
                     }
                 }
             },
@@ -547,14 +657,19 @@
                 "type": "object",
                 "properties": {
                     "item_id": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": 0,
+                        "example": 167
                     },
                     "user_id": {
                         "type": "string",
-                        "format": "document-id"
+                        "format": "document-id",
+                        "example": "nO91u3oBhOQfbPX02OFk"
                     },
                     "instance_number": {
-                        "type": "number"
+                        "type": "integer",
+                        "minimum": 1,
+                        "example": 2
                     },
                     "data": {
                         "type": "object"

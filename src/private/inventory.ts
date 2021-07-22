@@ -1,6 +1,4 @@
 import { Subscription } from "nats";
-import * as yup from "yup";
-import { ObjectShape } from "yup/lib/object";
 
 import { INDEXES, SERVICE_NAME } from "../config";
 
@@ -16,11 +14,6 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
-import {
-    UserSchema,
-    SearchParamsRequest,
-    SearchByUserIdRequest
-} from "../services/validatorSchema";
 
 interface AssignItemRequest {
     user_id: string;
@@ -47,42 +40,6 @@ interface SearchInventoryItemsByUser {
     limit: number;
 }
 
-const InventoryItemSchema = yup.object({
-    inventory_item_id: yup
-        .string()
-        .strict()
-        .typeError("inventory_item_id must be a string.")
-        .defined("The inventory_item_id (string) must be provided.")
-});
-
-export const DataUpdateSchema = yup.object({
-    data: yup.lazy((value) => {
-        if (value === undefined || value === null) {
-            return yup
-                .object()
-                .required("The data (object of string) must be provided.");
-        } else {
-            const schema = Object.keys(value).reduce(
-                (acc: ObjectShape, curr: string) => {
-                    acc[curr] = yup
-                        .string()
-                        .strict()
-                        .typeError("data's field must be a string.")
-                        .required(
-                            "The data's field (string) must be provided."
-                        );
-                    return acc;
-                },
-                {}
-            );
-            return yup
-                .object()
-                .shape(schema)
-                .required("The data (object of string) must be provided.");
-        }
-    })
-});
-
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
         "assign_inventory_item",
@@ -93,8 +50,6 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as AssignItemRequest;
 
                 try {
-                    await SearchByUserIdRequest.validate({ item_id });
-                    await UserSchema.validate({ user_id });
                     const data = await getWarehouseItem(item_id);
 
                     if (data.available_quantity <= 0) {
@@ -153,10 +108,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as UpdateInventoryItemRequest;
 
                 try {
-                    await InventoryItemSchema.validate({ inventory_item_id });
-                    await DataUpdateSchema.validate({ data });
-
                     await updateInventoryItemData(inventory_item_id, data);
+
                     console.log(
                         `[ITEM-STORE] Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
                     );
@@ -193,7 +146,6 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 ) as GetInventoryItemRequest;
 
                 try {
-                    await InventoryItemSchema.validate({ inventory_item_id });
                     const inventory_item = await getInventoryItem(
                         inventory_item_id
                     );
@@ -224,8 +176,7 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     const args = { start: Number(start), limit: Number(limit) };
-                    await UserSchema.validate({ user_id });
-                    await SearchParamsRequest.validate(args);
+
                     const inventoryItemsSearchResults = await getInventoryItemsByUserId(
                         user_id,
                         args.start,

@@ -8,6 +8,7 @@ import {
     PublicNatsHandler
 } from "../services/nats";
 import { JSONUser } from "../user";
+import { userDocumentIdValidator, userIdValidator } from "../utils/validators";
 
 export const userPublicHandlers: PublicNatsHandler[] = [
     [
@@ -17,15 +18,17 @@ export const userPublicHandlers: PublicNatsHandler[] = [
             for await (const message of subscription) {
                 try {
                     const natsConnection = getConnection();
-                    const data = jsonCodec.decode(
+                    const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
 
-                    const user = (data.body as unknown) as JSONUser;
+                    await userIdValidator.validate(
+                        ((body as unknown) as JSONUser).user_id
+                    );
 
                     const response = await natsConnection.request(
                         "item-store.add_user",
-                        jsonCodec.encode(user)
+                        jsonCodec.encode(body)
                     );
 
                     message.respond(response.data);
@@ -42,7 +45,6 @@ export const userPublicHandlers: PublicNatsHandler[] = [
             queue: SERVICE_NAME
         }
     ],
-
     [
         "GET",
         "user.*",
@@ -51,6 +53,8 @@ export const userPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
                     const documentId = String(message.subject).split(".")[2];
+
+                    await userDocumentIdValidator.validate(documentId);
 
                     const response = await natsConnection.request(
                         "item-store.get_user",

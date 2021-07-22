@@ -1,6 +1,4 @@
 import { Subscription } from "nats";
-import * as yup from "yup";
-import { ObjectShape } from "yup/lib/object";
 
 import {
     AirlockPayload,
@@ -15,61 +13,11 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
-import {
-    SearchParamsRequest,
-    SearchByUserIdRequest
-} from "../services/validatorSchema";
 
 interface SearchQuery {
     start: number;
     limit: number;
 }
-
-const WarehouseItemSchema = yup.object().shape({
-    name: yup
-        .string()
-        .strict()
-        .typeError("name must be a string.")
-        .defined("The name (string) must be provided."),
-    data: yup.lazy((value) => {
-        if (value === undefined || value === null) {
-            return yup
-                .object()
-                .required("The data (object of string(s)) must be provided.");
-        } else {
-            const schema = Object.keys(value).reduce(
-                (acc: ObjectShape, curr: string) => {
-                    acc[curr] = yup
-                        .string()
-                        .strict()
-                        .typeError("data's field must be a string.")
-                        .required(
-                            "The data's field (string) must be provided."
-                        );
-                    return acc;
-                },
-                {}
-            );
-
-            return yup
-                .object()
-                .shape(schema)
-                .required("The data (object of string(s)) must be provided.");
-        }
-    }),
-    total_quantity: yup
-        .number()
-        .strict()
-        .typeError("total_quantity must be an integer.")
-        .min(0)
-        .defined("The total quantity (positive integer) must be provided."),
-    available_quantity: yup
-        .number()
-        .strict()
-        .typeError("available_quantity must be an integer.")
-        .min(0)
-        .defined("The available quantity (positive integer) must be provided.")
-});
 
 const MAX_RESULTS = 100;
 
@@ -78,12 +26,10 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
         "add_warehouse_item",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const item = jsonCodec.decode(
-                    message.data
-                ) as JSONWarehouseItem;
-
                 try {
-                    await WarehouseItemSchema.validate(item);
+                    const item = jsonCodec.decode(
+                        message.data
+                    ) as JSONWarehouseItem;
 
                     const newItemId = await addWarehouseItem(item);
 
@@ -118,12 +64,14 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
         "get_warehouse_items",
         async (subscription: Subscription): Promise<void> => {
             for await (const message of subscription) {
-                const data = jsonCodec.decode(message.data) as AirlockPayload;
-                const { start, limit } = (data as unknown) as SearchQuery;
-
-                const args = { start: Number(start), limit: Number(limit) };
                 try {
-                    await SearchParamsRequest.validate(args);
+                    const data = jsonCodec.decode(
+                        message.data
+                    ) as AirlockPayload;
+                    const { start, limit } = (data as unknown) as SearchQuery;
+
+                    const args = { start: Number(start), limit: Number(limit) };
+
                     const items = await getWarehouseItems(
                         args.start || 0,
                         args.limit ? args.limit : MAX_RESULTS
@@ -154,7 +102,6 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    await SearchByUserIdRequest.validate({ item_id });
                     const item = await getWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
@@ -182,9 +129,6 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 ) as JSONWarehouseItem;
 
                 try {
-                    const item_id = data.item_id;
-                    await SearchByUserIdRequest.validate({ item_id });
-                    await WarehouseItemSchema.validate(data);
                     await updateWarehouseItem(data.item_id, data);
 
                     console.log(

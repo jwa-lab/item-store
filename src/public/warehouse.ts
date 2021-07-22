@@ -1,5 +1,6 @@
 import { SearchResponse } from "elasticsearch";
 import { Subscription } from "nats";
+import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 
@@ -9,6 +10,12 @@ import {
     jsonCodec,
     PublicNatsHandler
 } from "../services/nats";
+import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
+
+interface GetItemsQuery {
+    start: number;
+    limit: number;
+}
 
 export const itemPublicHandlers: PublicNatsHandler[] = [
     [
@@ -22,6 +29,8 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
+
+                    await warehouseItemValidator.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
@@ -53,6 +62,25 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
+                    await yup
+                        .object({
+                            start: yup
+                                .number()
+                                .typeError("start must be an integer.")
+                                .min(0)
+                                .defined(
+                                    "The start (positive integer) must be provided."
+                                ),
+                            limit: yup
+                                .number()
+                                .typeError("limit must be an integer.")
+                                .min(0)
+                                .defined(
+                                    "The limit (positive integer) must be provided."
+                                )
+                        })
+                        .validate((query as unknown) as GetItemsQuery);
+
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_items",
                         jsonCodec.encode(query)
@@ -81,12 +109,14 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
-                    const urlParameter = String(message.subject).split(".")[2];
+                    const item_id = Number(message.subject.split(".")[2]);
+
+                    await itemIdValidator.validate(item_id);
 
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_item",
                         jsonCodec.encode({
-                            item_id: Number(urlParameter)
+                            item_id
                         })
                     );
 
@@ -113,16 +143,12 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                    const urlParameter = String(message.subject).split(".")[2];
+                    const item_id = Number(message.subject.split(".")[2]);
 
-                    if (urlParameter === null)
-                        throw new Error(
-                            "item_id must be provided in the url parameter"
-                        );
-                    if (
-                        (body as JSONWarehouseItem).item_id !==
-                        Number(urlParameter)
-                    ) {
+                    await itemIdValidator.validate(item_id);
+                    await warehouseItemValidator.validate(body);
+
+                    if ((body as JSONWarehouseItem).item_id !== item_id) {
                         throw new Error(
                             "url parameter and item_id don't match"
                         );
@@ -132,7 +158,7 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         "item-store.update_warehouse_item",
                         jsonCodec.encode({
                             ...(body as JSONWarehouseItem),
-                            item_id: Number(urlParameter)
+                            item_id
                         })
                     );
 

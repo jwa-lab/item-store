@@ -89,38 +89,4 @@ describe("Given Item Store is connected to NATS", () => {
             });
         });
     });
-    describe("When I add a new User with a Validation Error [a field (user_id) is wrong-typed]", () => {
-        let response;
-
-        beforeAll(async () => {
-            response = await natsConnection.request(
-                "item-store.add_user",
-                jsonCodec.encode({
-                    user_id: "azerty"
-                })
-            );
-        });
-
-        it("Then returns an error", () => {
-            expect(jsonCodec.decode(response.data).error).toEqual(
-                "user_id must be an integer."
-            );
-        });
-    });
-    describe("When I retrieve the user with a Validation Error [a field (user_id) is missing]", () => {
-        let response;
-
-        beforeAll(async () => {
-            response = await natsConnection.request(
-                "item-store.get_user",
-                jsonCodec.encode({})
-            );
-        });
-
-        it("Then returns an error", () => {
-            expect(jsonCodec.decode(response.data).error).toEqual(
-                "The user_id (string) must be provided."
-            );
-        });
-    });
 });

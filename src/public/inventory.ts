@@ -1,4 +1,5 @@
 import { Subscription } from "nats";
+import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 
 import {
@@ -7,6 +8,17 @@ import {
     jsonCodec,
     PublicNatsHandler
 } from "../services/nats";
+import {
+    dataValidator,
+    inventoryItemIdValidator,
+    itemIdValidator,
+    userDocumentIdValidator
+} from "../utils/validators";
+
+interface GetInventoryItemsQuery {
+    start: number;
+    limit: number;
+}
 
 export const inventoryPublicHandlers: PublicNatsHandler[] = [
     [
@@ -19,6 +31,14 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
+
+                    await yup
+                        .object()
+                        .shape({
+                            item_id: itemIdValidator,
+                            user_id: userDocumentIdValidator
+                        })
+                        .validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",
@@ -51,6 +71,31 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
+                    await yup
+                        .object({
+                            start: yup
+                                .number()
+                                .typeError("start must be an integer.")
+                                .min(0)
+                                .defined(
+                                    "The start (positive integer) must be provided."
+                                ),
+                            limit: yup
+                                .number()
+                                .typeError("limit must be an integer.")
+                                .min(0)
+                                .defined(
+                                    "The limit (positive integer) must be provided."
+                                )
+                        })
+                        .validate((query as unknown) as GetInventoryItemsQuery);
+
+                    await yup
+                        .object({
+                            user_id: userDocumentIdValidator
+                        })
+                        .validate(body);
+
                     const response = await natsConnection.request(
                         "item-store.get_inventory_items",
                         jsonCodec.encode({
@@ -78,12 +123,16 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
-                    const urlParameter = String(message.subject).split(".")[2];
+                    const inventory_item_id = String(message.subject).split(
+                        "."
+                    )[2];
+
+                    await inventoryItemIdValidator.validate(inventory_item_id);
 
                     const response = await natsConnection.request(
                         "item-store.get_inventory_item",
                         jsonCodec.encode({
-                            inventory_item_id: urlParameter
+                            inventory_item_id
                         })
                     );
 
@@ -106,16 +155,22 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
-                    const urlParameter = String(message.subject).split(".")[2];
+                    const inventory_item_id = String(message.subject).split(
+                        "."
+                    )[2];
+
+                    await inventoryItemIdValidator.validate(inventory_item_id);
 
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
 
+                    await dataValidator.validate(body);
+
                     const response = await natsConnection.request(
                         "item-store.update_inventory_item",
                         jsonCodec.encode({
-                            inventory_item_id: urlParameter,
+                            inventory_item_id,
                             data: body
                         })
                     );
@@ -142,7 +197,11 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                 try {
                     const natsConnection = getConnection();
 
-                    const urlParameter = String(message.subject).split(".")[2];
+                    const inventory_item_id = String(message.subject).split(
+                        "."
+                    )[2];
+
+                    await inventoryItemIdValidator.validate(inventory_item_id);
 
                     const body = jsonCodec.decode(
                         message.data
@@ -152,10 +211,12 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                         new_user_id: string;
                     };
 
+                    await userDocumentIdValidator.validate(new_user_id);
+
                     const response = await natsConnection.request(
                         "item-store.transfer_inventory_item",
                         jsonCodec.encode({
-                            inventory_item_id: urlParameter,
+                            inventory_item_id,
                             new_user_id
                         })
                     );

@@ -39,7 +39,6 @@ export const inventoryPublicHandlers: PublicNatsHandler[] = [
                             user_id: userDocumentIdValidator
                         })
                         .validate(body);
-
                     const response = await natsConnection.request(
                         "item-store.assign_inventory_item",
                         jsonCodec.encode(body)

@@ -14,6 +14,7 @@ import {
     getWarehouseItem,
     updateWarehouseItemField
 } from "../services/warehouseItemStore";
+import { logger } from "../di";
 
 interface AssignItemRequest {
     user_id: string;
@@ -39,7 +40,6 @@ interface SearchInventoryItemsByUser {
     start: number;
     limit: number;
 }
-
 export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
     [
         "assign_inventory_item",
@@ -71,10 +71,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             data: {}
                         });
 
-                        console.log(
-                            `[ITEM-STORE] Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`
+                        logger.info(
+                            `Item ${item_id} assigned to user ${user_id} in ${INDEXES.INVENTORY}`
                         );
-
                         message.respond(
                             jsonCodec.encode({
                                 inventory_item_id
@@ -82,11 +81,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         );
                     }
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error assigning item ${item_id} to user ${user_id} in ${INDEXES.INVENTORY}`,
-                        err
+                    logger.info(
+                        `Error assigning item ${item_id} to user ${user_id} in ${INDEXES.INVENTORY}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -110,21 +107,18 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateInventoryItemData(inventory_item_id, data);
 
-                    console.log(
-                        `[ITEM-STORE] Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
+                    logger.info(
+                        `Item ${inventory_item_id} updated in ${INDEXES.INVENTORY}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             inventory_item_id
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error updating item ${inventory_item_id} in ${INDEXES.INVENTORY}`,
-                        err
+                    logger.error(
+                        `Error updating item ${inventory_item_id} in ${INDEXES.INVENTORY}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -152,11 +146,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(inventory_item));
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`,
-                        err
+                    logger.error(
+                        `Error retrieving item ${inventory_item_id} from ${INDEXES.INVENTORY}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -187,11 +179,9 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         jsonCodec.encode(inventoryItemsSearchResults)
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`,
-                        err
+                    logger.error(
+                        `Error retrieving items for user_id ${user_id} in ${INDEXES.INVENTORY}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -215,8 +205,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         new_user_id
                     );
 
-                    console.log(
-                        `[ITEM-STORE] Item ${inventory_item_id} transfered to user ${new_user_id} in ${INDEXES.INVENTORY}`
+                    logger.info(
+                        `Item ${inventory_item_id} transfered to user ${new_user_id} in ${INDEXES.INVENTORY}`
                     );
 
                     message.respond(
@@ -226,9 +216,8 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error transfering item for user_id ${new_user_id} in ${INDEXES.INVENTORY}`,
-                        err
+                    logger.error(
+                        `Error transfering item for user_id ${new_user_id} in ${INDEXES.INVENTORY}`
                     );
 
                     message.respond(

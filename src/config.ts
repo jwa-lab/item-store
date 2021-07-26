@@ -5,7 +5,8 @@ const {
     ELASTICSEARCH_INDEX_NAME = "",
     // should be ajusted according to the number of processes.
     // 4 instances of item-store = 4 potential concurrent requests = 4 retries
-    RETRY_ON_CONFLICT_RETRIES = 4
+    RETRY_ON_CONFLICT_RETRIES = 4,
+    LOGGING_FORMAT = "CLI"
 } = process.env;
 
 if (!NATS_URL) {
@@ -32,7 +33,8 @@ export {
     SERVICE_NAME,
     ELASTICSEARCH_URI,
     NATS_URL,
-    NUM_RETRY_ON_CONFLICT_RETRIES as RETRY_ON_CONFLICT_RETRIES
+    NUM_RETRY_ON_CONFLICT_RETRIES as RETRY_ON_CONFLICT_RETRIES,
+    LOGGING_FORMAT
 };
 
 export const INDEXES = {

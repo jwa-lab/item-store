@@ -16,6 +16,7 @@ import {
 import { initElasticSearch, ensureIndexExists } from "./services/elasticSearch";
 import { ensureAdminDoc } from "./services/adminStore";
 import { init as initDocs } from "./services/docs";
+import { logger } from "./di";
 
 async function start() {
     async function shutdown(exitCode: number) {
@@ -43,17 +44,16 @@ async function start() {
         registerPublicHandlers(SERVICE_NAME, inventoryPublicHandlers);
 
         process.on("SIGINT", () => {
-            console.log("[ITEM-STORE] Gracefully shutting down...");
+            logger.info("Gracefully shutting down...");
             shutdown(0);
         });
 
         process.on("SIGTERM", () => {
-            console.log("[ITEM-STORE] Gracefully shutting down...");
+            logger.info("Gracefully shutting down...");
             shutdown(0);
         });
     } catch (err) {
-        console.error(`[ITEM-STORE] Item Store exited with error: ${err}`);
-        console.error(err);
+        logger.error(`Item Store exited with error: ${err}`);
         shutdown(1);
     }
 }

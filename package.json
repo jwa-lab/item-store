@@ -1,7 +1,7 @@
 {
     "name": "item-store",
     "private": true,
-    "version": "0.0.7",
+    "version": "0.0.8",
     "description": "Store and retrieve items from elasticsearch",
     "main": "dist/index.js",
     "scripts": {

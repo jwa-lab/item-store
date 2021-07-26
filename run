@@ -4,6 +4,15 @@ export NATS_URL=nats://localhost:4222
 export ELASTICSEARCH_URI=http://localhost:9200
 export ELASTICSEARCH_INDEX_NAME=jwa_item_store
 
+set -euo pipefail
+
+declare -a tags=(
+    $(git rev-parse --verify HEAD --short)
+    $(node -p -e "require('./package.json').version")
+)
+
+declare name=$(node -p -e "require('./package.json').name")
+
 function start() {
     node dist/index.js
 }
@@ -14,6 +23,25 @@ function dev() {
 
 function build() {
     npm run build
+}
+
+function docker-build() {
+    docker build . -t jwalab/item-store
+}
+
+function docker-tag() {
+    for tag in ${tags[@]}
+    do
+        docker tag jwalab/$name jwalab/$name:$tag
+    done
+}
+
+function docker-push() {
+    docker push jwalab/$name jwalab/$name
+    for tag in ${tags[@]}
+    do
+        docker push jwalab/$name jwalab/$name:$tag
+    done
 }
 
 "$@"

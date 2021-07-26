@@ -3,6 +3,7 @@ import { jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import { addUser, getUser, updateUser } from "../services/userStore";
 import { JSONUser } from "../user";
+import { logger } from "../di";
 
 interface GetUserRequest {
     user_id: string;
@@ -23,8 +24,8 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     const newUserId = await addUser(user);
 
-                    console.log(
-                        `[USER-STORE] User added to ${INDEXES.USER} with id ${newUserId}`
+                    logger.info(
+                        `User added to ${INDEXES.USER} with id ${newUserId}`
                     );
 
                     message.respond(
@@ -33,11 +34,7 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error adding user to ${INDEXES.USER}`,
-                        err
-                    );
-
+                    logger.error(`Error adding user to ${INDEXES.USER}`);
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -63,9 +60,8 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(user));
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error getting user ${user_id} from ${INDEXES.USER}`,
-                        err
+                    logger.error(
+                        `Error getting user ${user_id} from ${INDEXES.USER}`
                     );
 
                     message.respond(
@@ -88,19 +84,15 @@ export const userPrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateUser(user_id, user);
 
-                    console.log(
-                        `[USER-STORE] User ${user_id} updated in ${INDEXES.USER}`
-                    );
-
+                    logger.info(`User ${user_id} updated in ${INDEXES.USER}`);
                     message.respond(
                         jsonCodec.encode({
                             user_id
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[USER-STORE] Error updating user ${user_id} in ${INDEXES.USER}`,
-                        err
+                    logger.error(
+                        `Error updating user ${user_id} in ${INDEXES.USER}`
                     );
 
                     message.respond(

@@ -6,6 +6,7 @@ import {
     SubscriptionOptions
 } from "nats";
 import { NATS_URL } from "../config";
+import { logger } from "../di";
 
 type JSONValue =
     | string
@@ -40,13 +41,11 @@ export async function init(): Promise<void> {
         servers: NATS_URL
     });
 
-    console.info(
-        `[ITEM-STORE] Connected to Nats on ${natsConnection.getServer()}`
-    );
+    logger.info(`Connected to Nats on ${natsConnection.getServer()}`);
 
     (async () => {
         for await (const status of natsConnection.status()) {
-            console.info(`${status.type}: ${JSON.stringify(status.data)}`);
+            logger.info(`${status.type}: ${JSON.stringify(status.data)}`);
         }
     })().then();
 }
@@ -57,7 +56,7 @@ export function registerPrivateHandlers(
 ): void {
     handlers.map(([subject, handler, options]) => {
         const fullSubject = `${prefix}.${subject}`;
-        console.log(`[ITEM-STORE] Registering private handler ${fullSubject}`);
+        logger.info(`Registering private handler ${fullSubject}`);
         handler(natsConnection.subscribe(fullSubject, options));
     });
 }
@@ -68,13 +67,13 @@ export function registerPublicHandlers(
 ): void {
     handlers.map(([method, subject, handler, options]) => {
         const fullSubject = `${method}:${prefix}.${subject}`;
-        console.log(`[ITEM-STORE] Registering public handler ${fullSubject}`);
+        logger.info(`Registering public handler ${fullSubject}`);
         handler(natsConnection.subscribe(fullSubject, options));
     });
 }
 
 export function drain(): Promise<void> {
-    console.log(`[ITEM-STORE] Draining connection to NATS server ${NATS_URL}`);
+    logger.info(`Draining connection to NATS server ${NATS_URL}`);
     return natsConnection.drain();
 }
 

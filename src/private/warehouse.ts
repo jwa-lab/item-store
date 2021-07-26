@@ -13,6 +13,7 @@ import {
     updateWarehouseItem
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
+import { logger } from "../di";
 
 interface SearchQuery {
     start: number;
@@ -33,20 +34,16 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                     const newItemId = await addWarehouseItem(item);
 
-                    console.log(
-                        `[ITEM-STORE] Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`
+                    logger.info(
+                        `Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             item_id: newItemId
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error adding item to ${INDEXES.WAREHOUSE}`,
-                        err
-                    );
+                    logger.error(`Error adding item to ${INDEXES.WAREHOUSE}`);
 
                     message.respond(
                         jsonCodec.encode({
@@ -79,11 +76,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(items));
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error getting items from ${INDEXES.WAREHOUSE}`,
-                        err
+                    logger.error(
+                        `Error getting items from ${INDEXES.WAREHOUSE}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -106,11 +101,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                     message.respond(jsonCodec.encode(item));
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error getting item ${item_id} from ${INDEXES.WAREHOUSE}`,
-                        err
+                    logger.error(
+                        `Error getting item ${item_id} from ${INDEXES.WAREHOUSE}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message
@@ -131,8 +124,8 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                 try {
                     await updateWarehouseItem(data.item_id, data);
 
-                    console.log(
-                        `[ITEM-STORE] Item ${data.item_id} updated in ${INDEXES.WAREHOUSE}`
+                    logger.info(
+                        `Item ${data.item_id} updated in ${INDEXES.WAREHOUSE}`
                     );
 
                     message.respond(
@@ -141,11 +134,9 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         })
                     );
                 } catch (err) {
-                    console.error(
-                        `[ITEM-STORE] Error updating item ${data.item_id} in ${INDEXES.WAREHOUSE}`,
-                        err
+                    logger.error(
+                        `Error updating item ${data.item_id} in ${INDEXES.WAREHOUSE}`
                     );
-
                     message.respond(
                         jsonCodec.encode({
                             error: err.message

@@ -1,6 +1,7 @@
 import fs from "fs";
 import { SERVICE_NAME } from "../config";
 import { getConnection, jsonCodec } from "./nats";
+import { logger } from "../di";
 
 export async function init(): Promise<void> {
     const docs = String(fs.readFileSync("./docs/oas-docs.json"));
@@ -9,13 +10,13 @@ export async function init(): Promise<void> {
     try {
         jsonDocs = JSON.parse(docs);
     } catch (err) {
-        console.error("[ITEM-STORE] Invalid docs", err);
+        logger.error("Invalid docs");
         throw new Error("[ITEM-STORE] Invalid docs");
     }
 
     const natsConnection = getConnection();
 
-    console.log(`[ITEM-STORE] Registering docs subject`);
+    logger.info(`Registering docs subject`);
 
     const docsSubscription = natsConnection.subscribe("docs", {
         queue: SERVICE_NAME

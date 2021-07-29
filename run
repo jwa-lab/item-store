@@ -37,10 +37,10 @@ function docker-tag() {
 }
 
 function docker-push() {
-    docker push jwalab/$name jwalab/$name
+    docker push jwalab/$name
     for tag in ${tags[@]}
     do
-        docker push jwalab/$name jwalab/$name:$tag
+        docker push jwalab/$name:$tag
     done
 }
 

@@ -26,7 +26,7 @@ function build() {
 }
 
 function docker-build() {
-    docker build . -t jwalab/item-store
+    docker build . -t jwalab/$name
 }
 
 function docker-tag() {

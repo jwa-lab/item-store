@@ -88,6 +88,12 @@ export async function getInventoryItemsByUserId(
 
     const total = responseBody.hits.total;
     const results = responseBody.hits.hits;
+    const results_remap = results.map((result) => result._source);
+    const inventory_item_id = results.map((result) => result._id);
+
+    for (const i in results_remap) {
+        results_remap[i]._id = inventory_item_id[i];
+    }
 
     return {
         total,

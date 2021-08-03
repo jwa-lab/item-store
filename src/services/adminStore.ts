@@ -17,7 +17,8 @@ export async function ensureAdminDoc(): Promise<void> {
             id: ADMIN_DOC_ID,
             body: {
                 last_warehouse_item_id: 0
-            }
+            },
+            refresh: true
         });
     }
 }
@@ -33,7 +34,8 @@ export async function incrementLastWarehouseItemId(): Promise<number> {
             script: {
                 source: "ctx._source.last_warehouse_item_id++"
             }
-        }
+        },
+        refresh: true
     });
 
     return getAdminDocField<number>("last_warehouse_item_id");
@@ -63,6 +65,7 @@ export async function setAdminDocField<T>(
             doc: {
                 [fieldName]: value
             }
-        }
+        },
+        refresh: true
     });
 }

@@ -22,7 +22,8 @@ export async function addWarehouseItem(
         body: {
             ...data,
             item_id: newId
-        }
+        },
+        refresh: true
     });
 
     return newId;
@@ -73,7 +74,8 @@ export async function updateWarehouseItem(
         id: String(id),
         body: {
             doc: data
-        }
+        },
+        refresh: true
     });
 }
 
@@ -91,6 +93,7 @@ export async function updateWarehouseItemField<T>(
             doc: {
                 [fieldName]: value
             }
-        }
+        },
+        refresh: true
     });
 }

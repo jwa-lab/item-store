@@ -7,7 +7,8 @@ export async function addUser(data: JSONUser): Promise<string> {
 
     const response = await client.index({
         index: INDEXES.USER,
-        body: data
+        body: data,
+        refresh: true
     });
 
     return response.body._id;
@@ -32,6 +33,7 @@ export async function updateUser(id: string, data: JSONUser): Promise<void> {
         id,
         body: {
             doc: data
-        }
+        },
+        refresh: true
     });
 }

@@ -1,4 +1,5 @@
 const { connect, JSONCodec } = require("nats");
+const { doc } = require("prettier");
 
 describe("Given Inventory is connected to NATS", () => {
     let natsConnection;
@@ -204,6 +205,76 @@ describe("Given Inventory is connected to NATS", () => {
                         });
                     });
                 });
+            });
+        });
+    });
+
+    describe("When I list the items of a user", () => {
+        let response;
+        let documentId;
+        let warehouseItemId;
+        let inventoryItemId;
+
+        beforeAll(async () => {
+            response = await natsConnection.request(
+                "item-store.add_warehouse_item",
+                jsonCodec.encode({
+                    no_update_after: undefined,
+                    name: "Christiano Ronaldo",
+                    data: {
+                        XP: "94"
+                    },
+                    total_quantity: 1,
+                    available_quantity: 1
+                })
+            );
+
+            warehouseItemId = jsonCodec.decode(response.data).item_id;
+
+            response = await natsConnection.request(
+                "item-store.add_user",
+                jsonCodec.encode({
+                    user_id: 146
+                })
+            );
+
+            documentId = jsonCodec.decode(response.data).user_id;
+
+            response = await natsConnection.request(
+                "item-store.assign_inventory_item",
+                jsonCodec.encode({
+                    user_id: documentId,
+                    item_id: warehouseItemId
+                })
+            );
+
+            inventoryItemId = jsonCodec.decode(response.data).inventory_item_id;
+
+            response = await natsConnection.request(
+                "item-store.get_inventory_items",
+                jsonCodec.encode({
+                    user_id: documentId,
+                    start: 0,
+                    limit: 1
+                })
+            );
+        });
+
+        it("Then returns the item assigned to user_1 with the inventory_item_id", () => {
+            expect(jsonCodec.decode(response.data)).toEqual({
+                total: {
+                    value: 1,
+                    relation: "eq"
+                },
+                results: [
+                    {
+                        item_id: warehouseItemId,
+                        user_id: documentId,
+                        instance_number: 1,
+                        data: {},
+                        inventory_item_id: inventoryItemId
+                    }
+                ]
             });
         });
     });

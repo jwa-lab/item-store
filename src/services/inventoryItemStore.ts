@@ -15,7 +15,8 @@ export async function addInventoryItem(
 
     const response = await client.index({
         index: INDEXES.INVENTORY,
-        body: data
+        body: data,
+        refresh: true
     });
 
     return response.body._id;
@@ -45,7 +46,8 @@ export async function updateInventoryItemData(
             doc: {
                 data: new_data
             }
-        }
+        },
+        refresh: true
     });
 }
 
@@ -62,7 +64,8 @@ export async function updateInventoryItemUser(
             doc: {
                 user_id: new_user_id
             }
-        }
+        },
+        refresh: true
     });
 }
 
@@ -91,6 +94,9 @@ export async function getInventoryItemsByUserId(
 
     return {
         total,
-        results: results.map((result) => result._source)
+        results: results.map(({ _id, _source }) => ({
+            ..._source,
+            inventory_item_id: _id
+        }))
     };
 }

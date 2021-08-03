@@ -5,10 +5,7 @@ export class WinstonLogger extends GenercicLogger {
     serviceName: string;
     logger: winston.Logger;
 
-    constructor(
-        serviceName: string,
-        logger: winston.Logger
-    ) {
+    constructor(serviceName: string, logger: winston.Logger) {
         super();
         this.serviceName = serviceName;
         this.logger = logger;
@@ -17,7 +14,7 @@ export class WinstonLogger extends GenercicLogger {
     protected log(level: string, message: string): void {
         this.logger.log({
             level,
-            logInfos : {
+            logInfos: {
                 service: this.serviceName,
                 date: new Date()
             },

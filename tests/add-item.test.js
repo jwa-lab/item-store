@@ -1,4 +1,6 @@
-const { connect, JSONCodec } = require("nats");
+const { connect, JSONCodec, headers } = require("nats");
+
+const STUDIO_ID = "test_id";
 
 describe("Given Item Store is connected to NATS", () => {
     let natsConnection;
@@ -17,6 +19,9 @@ describe("Given Item Store is connected to NATS", () => {
         let item_id;
 
         beforeAll(async () => {
+            const natsHeaders = headers();
+
+            natsHeaders.set("studio_id", STUDIO_ID);
             response = await natsConnection.request(
                 "item-store.add_warehouse_item",
                 jsonCodec.encode({
@@ -27,7 +32,8 @@ describe("Given Item Store is connected to NATS", () => {
                     },
                     total_quantity: 1000,
                     available_quantity: 1000
-                })
+                }),
+                { headers: natsHeaders }
             );
 
             item_id = jsonCodec.decode(response.data).item_id;
@@ -50,6 +56,7 @@ describe("Given Item Store is connected to NATS", () => {
             it("Then returns the item", () => {
                 expect(jsonCodec.decode(response.data)).toEqual({
                     item_id: item_id,
+                    studio_id: STUDIO_ID,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
@@ -68,6 +75,7 @@ describe("Given Item Store is connected to NATS", () => {
                         name: "Lionel Messi",
                         no_update_after: undefined,
                         item_id: item_id,
+                        studio_id: STUDIO_ID,
                         data: {
                             XP: "80"
                         },
@@ -96,6 +104,7 @@ describe("Given Item Store is connected to NATS", () => {
                 it("Then returns the updated item", () => {
                     expect(jsonCodec.decode(response.data)).toEqual({
                         item_id: item_id,
+                        studio_id: STUDIO_ID,
                         name: "Lionel Messi",
                         data: {
                             XP: "80"

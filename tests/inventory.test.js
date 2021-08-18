@@ -1,5 +1,7 @@
-const { connect, JSONCodec } = require("nats");
+const { connect, JSONCodec, headers } = require("nats");
 const { doc } = require("prettier");
+
+const STUDIO_ID = "test_id";
 
 describe("Given Inventory is connected to NATS", () => {
     let natsConnection;
@@ -19,6 +21,9 @@ describe("Given Inventory is connected to NATS", () => {
         let inventoryItemId;
 
         beforeAll(async () => {
+            const natsHeaders = headers();
+
+            natsHeaders.set("studio_id", STUDIO_ID);
             response = await natsConnection.request(
                 "item-store.add_warehouse_item",
                 jsonCodec.encode({
@@ -29,7 +34,8 @@ describe("Given Inventory is connected to NATS", () => {
                     },
                     total_quantity: 1,
                     available_quantity: 1
-                })
+                }),
+                { headers: natsHeaders }
             );
 
             warehouseItemId = jsonCodec.decode(response.data).item_id;
@@ -66,6 +72,7 @@ describe("Given Inventory is connected to NATS", () => {
             it("Then has reduced the available quantity by 1", () => {
                 expect(warehouseItem).toEqual({
                     item_id: warehouseItemId,
+                    studio_id: STUDIO_ID,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "94"
@@ -216,6 +223,9 @@ describe("Given Inventory is connected to NATS", () => {
         let inventoryItemId;
 
         beforeAll(async () => {
+            const natsHeaders = headers();
+
+            natsHeaders.set("studio_id", STUDIO_ID);
             response = await natsConnection.request(
                 "item-store.add_warehouse_item",
                 jsonCodec.encode({
@@ -226,7 +236,8 @@ describe("Given Inventory is connected to NATS", () => {
                     },
                     total_quantity: 1,
                     available_quantity: 1
-                })
+                }),
+                {headers: natsHeaders}
             );
 
             warehouseItemId = jsonCodec.decode(response.data).item_id;

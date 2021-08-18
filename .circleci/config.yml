@@ -1,19 +1,21 @@
 version: 2.1
 orbs:
-    node: circleci/node@4.1.1
+    node: circleci/node@4.7.0
 jobs:
     lint:
-        executor: node/default
+        executor:
+            name: node/default
+            tag: "16.6"
         steps:
             - checkout
             - run: npm install
             - run: npm run lint
     test:
         machine:
-            image: ubuntu-2004:202010-01
+            image: ubuntu-2004:202107-02
         steps:
             - checkout
-            - run: npm install
+            - run: npm ci
             - run: npx minilab start
             - run:
                   command: docker-compose up

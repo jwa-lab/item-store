@@ -27,7 +27,7 @@ export const dataValidator = yup.lazy((value) => {
 });
 
 export const warehouseItemHeadersValidator = yup.object().shape({
-    "Authorization": yup.date().strict()
+    Authorization: yup.date().strict()
 });
 
 export const warehouseItemValidator = yup.object().shape({

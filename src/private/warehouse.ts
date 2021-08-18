@@ -42,7 +42,10 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         throw new Error("NO_STUDIO_ID_GIVEN_IN_HEADERS");
                     }
 
-                    const newItemId = await addWarehouseItem({ ...item, studio_id: studioId });
+                    const newItemId = await addWarehouseItem({
+                        ...item,
+                        studio_id: studioId
+                    });
 
                     logger.info(
                         `Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`

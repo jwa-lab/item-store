@@ -45,6 +45,6 @@ export const INDEXES = {
 };
 
 export interface NatsHeaderInterface {
-    studioId?: string,
-    userId?: string
+    studioId?: string;
+    userId?: string;
 }

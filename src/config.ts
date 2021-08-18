@@ -43,3 +43,8 @@ export const INDEXES = {
     USER: `${ELASTICSEARCH_INDEX_NAME}-user`,
     ADMIN: `${ELASTICSEARCH_INDEX_NAME}-admin`
 };
+
+export interface NatsHeaderInterface {
+    studioId?: string,
+    userId?: string
+}

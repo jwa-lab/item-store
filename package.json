@@ -37,12 +37,13 @@
     "homepage": "https://github.com/jwa-lab/item-store#readme",
     "dependencies": {
         "@elastic/elasticsearch": "^7.11.0",
+        "jwt-decode": "^3.1.2",
         "nats": "^2.0.0-218",
         "winston": "^3.3.3",
         "yup": "^0.32.9"
     },
     "devDependencies": {
-        "@jwalab/minilab": "^0.0.3",
+        "@jwalab/minilab": "^0.0.11",
         "@tsconfig/node14": "^1.0.0",
         "@types/elasticsearch": "^5.0.37",
         "@typescript-eslint/eslint-plugin": "^4.15.0",

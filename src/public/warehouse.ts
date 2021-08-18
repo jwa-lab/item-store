@@ -1,16 +1,13 @@
 import { SearchResponse } from "elasticsearch";
-import { Subscription } from "nats";
+import { headers, Subscription } from "nats";
 import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 
-import {
-    AirlockPayload,
-    getConnection,
-    jsonCodec,
-    PublicNatsHandler
-} from "../services/nats";
-import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
+import { AirlockPayload, getConnection, jsonCodec, PublicNatsHandler } from "../services/nats";
+import { itemIdValidator, warehouseItemHeadersValidator, warehouseItemValidator } from "../utils/validators";
+import { DEFAULT_RECONNECT_TIME_WAIT } from "nats/lib/nats-base-client/types";
+import jwtDecode from "jwt-decode";
 
 interface GetItemsQuery {
     start: number;
@@ -25,16 +22,28 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
             for await (const message of subscription) {
                 try {
                     const natsConnection = getConnection();
+                    const natsHeaders = headers();
 
                     const { body } = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
 
+                    if (!message?.headers) {
+                        throw new Error("MISSING_HEADERS");
+                    }
+
                     await warehouseItemValidator.validate(body);
+                    // What does our token looks like ? What kind of validation do we want ? How to recognize a studio token from a user token ? (sub === cid in studio token)
+                    //const studioId = jwtDecode(message.headers.get('Authorization'))?.cid;
+                    natsHeaders.set('studio_id', "test_id");
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
-                        jsonCodec.encode(body)
+                        jsonCodec.encode(body),
+                        {
+                            timeout: 1000,          // PR Comment only: timeout is required in request options object, no default value var found in Nats for timeout.
+                            headers: natsHeaders
+                        }
                     );
                     message.respond(response.data);
                 } catch (err) {

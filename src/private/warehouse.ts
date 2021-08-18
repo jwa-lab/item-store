@@ -32,7 +32,17 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         message.data
                     ) as JSONWarehouseItem;
 
-                    const newItemId = await addWarehouseItem(item);
+                    if (!message.headers) {
+                        throw new Error("NATS_HEADERS_NOT_FOUND");
+                    }
+
+                    const studioId = message.headers.get("studio_id");
+
+                    if (!studioId) {
+                        throw new Error("NO_STUDIO_ID_GIVEN_IN_HEADERS");
+                    }
+
+                    const newItemId = await addWarehouseItem({ ...item, studio_id: studioId });
 
                     logger.info(
                         `Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`

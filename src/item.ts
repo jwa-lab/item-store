@@ -1,6 +1,7 @@
 export interface JSONWarehouseItem {
     no_update_after: string | undefined;
     item_id: number;
+    studio_id: string;
     name: string;
     data: { [k: string]: string };
     total_quantity: number;

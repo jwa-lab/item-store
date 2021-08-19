@@ -4,7 +4,9 @@ import {
     NatsConnection,
     Subscription,
     JSONCodec,
-    SubscriptionOptions, MsgHdrs, headers
+    SubscriptionOptions,
+    MsgHdrs,
+    headers
 } from "nats";
 import { NATS_URL } from "../config";
 import { logger } from "../di";

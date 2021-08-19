@@ -1,6 +1,10 @@
 import { Subscription } from "nats";
 
-import { AirlockPayload, jsonCodec, PrivateNatsHandler } from "../services/nats";
+import {
+    AirlockPayload,
+    jsonCodec,
+    PrivateNatsHandler
+} from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addWarehouseItem,

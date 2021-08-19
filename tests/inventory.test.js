@@ -237,7 +237,7 @@ describe("Given Inventory is connected to NATS", () => {
                     total_quantity: 1,
                     available_quantity: 1
                 }),
-                {headers: natsHeaders}
+                { headers: natsHeaders }
             );
 
             warehouseItemId = jsonCodec.decode(response.data).item_id;

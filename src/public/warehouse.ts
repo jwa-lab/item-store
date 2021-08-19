@@ -3,7 +3,13 @@ import { Subscription } from "nats";
 import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
-import { AirlockPayload, getConnection, jsonCodec, parseJwtToNats, PublicNatsHandler } from "../services/nats";
+import {
+    AirlockPayload,
+    getConnection,
+    jsonCodec,
+    parseJwtToNats,
+    PublicNatsHandler
+} from "../services/nats";
 import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
 
 interface GetItemsQuery {
@@ -30,7 +36,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
 
                     await warehouseItemValidator.validate(body);
 
-                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
+                    const natsHeaders = parseJwtToNats(
+                        message.headers.get("Authorization")
+                    );
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
@@ -89,7 +97,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         })
                         .validate((query as unknown) as GetItemsQuery);
 
-                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
+                    const natsHeaders = parseJwtToNats(
+                        message.headers.get("Authorization")
+                    );
 
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_items",

@@ -4,13 +4,14 @@ import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 import {
-    AirlockPayload,
+    AirlockPayload, getAirlockAuthorization,
     getConnection,
     jsonCodec,
     parseJwtToNats,
     PublicNatsHandler
 } from "../services/nats";
 import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
+import MissingHeaderError from "../errors/missingHeaderError";
 
 interface GetItemsQuery {
     start: number;
@@ -31,14 +32,14 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     ) as AirlockPayload;
 
                     if (!message?.headers) {
-                        throw new Error("MISSING_HEADERS");
+                        throw new MissingHeaderError();
                     }
 
-                    await warehouseItemValidator.validate(body);
-
                     const natsHeaders = parseJwtToNats(
-                        message.headers.get("Authorization")
+                        getAirlockAuthorization(message.headers)
                     );
+
+                    await warehouseItemValidator.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
@@ -75,8 +76,12 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     ) as AirlockPayload;
 
                     if (!message?.headers) {
-                        throw new Error("MISSING_HEADERS");
+                        throw new MissingHeaderError();
                     }
+
+                    const natsHeaders = parseJwtToNats(
+                        getAirlockAuthorization(message.headers)
+                    );
 
                     await yup
                         .object({
@@ -96,10 +101,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                                 )
                         })
                         .validate((query as unknown) as GetItemsQuery);
-
-                    const natsHeaders = parseJwtToNats(
-                        message.headers.get("Authorization")
-                    );
 
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_items",

@@ -10,6 +10,7 @@ import {
 } from "nats";
 import { NATS_URL } from "../config";
 import { logger } from "../di";
+import MissingHeaderError from "../errors/missingHeaderError";
 
 type JSONValue =
     | string
@@ -57,6 +58,20 @@ export function parseJwtToNats(jwt: string): MsgHdrs {
     natsHeaders.set("username", decoded?.sub || "");
 
     return natsHeaders;
+}
+
+export function getAirlockAuthorization(headers: MsgHdrs): string {
+    if (!headers) {
+        throw new MissingHeaderError();
+    }
+
+    const authorization = headers.get("Authorization");
+
+    if (!authorization) {
+        throw new Error("NO_AUTHORIZATION");
+    }
+
+    return authorization;
 }
 
 export async function init(): Promise<void> {

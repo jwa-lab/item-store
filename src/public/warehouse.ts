@@ -27,9 +27,10 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     if (!message?.headers) {
                         throw new Error("MISSING_HEADERS");
                     }
-                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
 
                     await warehouseItemValidator.validate(body);
+
+                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
@@ -65,6 +66,10 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
+                    if (!message?.headers) {
+                        throw new Error("MISSING_HEADERS");
+                    }
+
                     await yup
                         .object({
                             start: yup
@@ -84,9 +89,12 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         })
                         .validate((query as unknown) as GetItemsQuery);
 
+                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
+
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_items",
-                        jsonCodec.encode(query)
+                        jsonCodec.encode(query),
+                        { timeout: 1000, headers: natsHeaders }
                     );
 
                     const items = jsonCodec.decode(

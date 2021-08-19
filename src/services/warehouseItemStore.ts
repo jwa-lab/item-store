@@ -42,14 +42,26 @@ export async function getWarehouseItem(id: number): Promise<JSONWarehouseItem> {
 
 export async function getWarehouseItems(
     from: number,
-    size: number
+    size: number,
+    studio_id: string
 ): Promise<WarehouseItemsSearchResults> {
     const client = getClient();
 
     const response = await client.search({
         index: INDEXES.WAREHOUSE,
         from,
-        size
+        size,
+        body: {
+            query: {
+                bool: {
+                    filter: {
+                        term: {
+                            studio_id
+                        }
+                    }
+                }
+            }
+        }
     });
 
     const responseBody = response.body as SearchResponse<JSONWarehouseItem>;

@@ -1,10 +1,6 @@
 import { Subscription } from "nats";
 
-import {
-    AirlockPayload,
-    jsonCodec,
-    PrivateNatsHandler
-} from "../services/nats";
+import { AirlockPayload, jsonCodec, PrivateNatsHandler } from "../services/nats";
 import { INDEXES, SERVICE_NAME } from "../config";
 import {
     addWarehouseItem,
@@ -36,15 +32,15 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         throw new Error("NATS_HEADERS_NOT_FOUND");
                     }
 
-                    const studioId = message.headers.get("studio_id");
+                    const studio_id = message.headers.get("studio_id");
 
-                    if (!studioId) {
+                    if (!studio_id) {
                         throw new Error("NO_STUDIO_ID_GIVEN_IN_HEADERS");
                     }
 
                     const newItemId = await addWarehouseItem({
                         ...item,
-                        studio_id: studioId
+                        studio_id
                     });
 
                     logger.info(
@@ -78,13 +74,25 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     const data = jsonCodec.decode(
                         message.data
                     ) as AirlockPayload;
+
+                    if (!message.headers) {
+                        throw new Error("NATS_HEADERS_NOT_FOUND");
+                    }
+
+                    const studio_id = message.headers.get("studio_id");
+
+                    if (!studio_id) {
+                        throw new Error("NO_STUDIO_ID_GIVEN_IN_HEADERS");
+                    }
+
                     const { start, limit } = (data as unknown) as SearchQuery;
 
                     const args = { start: Number(start), limit: Number(limit) };
 
                     const items = await getWarehouseItems(
                         args.start || 0,
-                        args.limit ? args.limit : MAX_RESULTS
+                        args.limit ? args.limit : MAX_RESULTS,
+                        studio_id
                     );
 
                     message.respond(jsonCodec.encode(items));

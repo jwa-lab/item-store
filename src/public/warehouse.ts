@@ -1,14 +1,9 @@
 import { SearchResponse } from "elasticsearch";
-import { headers, Subscription } from "nats";
+import { Subscription } from "nats";
 import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
-import {
-    AirlockPayload,
-    getConnection,
-    jsonCodec, parseJwtToNats,
-    PublicNatsHandler
-} from "../services/nats";
+import { AirlockPayload, getConnection, jsonCodec, parseJwtToNats, PublicNatsHandler } from "../services/nats";
 import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
 
 interface GetItemsQuery {
@@ -32,12 +27,9 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     if (!message?.headers) {
                         throw new Error("MISSING_HEADERS");
                     }
-                    const natsHeaders = parseJwtToNats('abcd');
+                    const natsHeaders = parseJwtToNats(message.headers.get("Authorization"));
 
                     await warehouseItemValidator.validate(body);
-
-                    // What does our token looks like ? What kind of validation do we want ? How to recognize a studio token from a user token ? (sub === cid in studio token)
-                    //const studioId = jwtDecode(message.headers.get('Authorization'))?.cid;
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",

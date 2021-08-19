@@ -1,7 +1,13 @@
-import { connect, headers, JSONCodec, MsgHdrs, NatsConnection, Subscription, SubscriptionOptions } from "nats";
+import jwtDecode from "jwt-decode";
+import {
+    connect,
+    NatsConnection,
+    Subscription,
+    JSONCodec,
+    SubscriptionOptions, MsgHdrs, headers
+} from "nats";
 import { NATS_URL } from "../config";
 import { logger } from "../di";
-import jwtDecode from "jwt-decode";
 
 type JSONValue =
     | string
@@ -12,29 +18,17 @@ type JSONValue =
     | { [key: string]: JSONValue };
 
 export type PrivateNatsHandler = [
-    topic
-:
-string,
-    handler;
-:
-(subscription: Subscription) => Promise < void >,
-    options ? : Omit<SubscriptionOptions, "callback">;
-]
-;
+    topic: string,
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
+];
 
 export type PublicNatsHandler = [
-    method
-:
-"GET" | "POST" | "PUT" | "PATCH" | "DELETE",
-    topic;
-:
-string,
-    handler;
-:
-(subscription: Subscription) => Promise < void >,
-    options ? : Omit<SubscriptionOptions, "callback">;
-]
-;
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+    topic: string,
+    handler: (subscription: Subscription) => Promise<void>,
+    options?: Omit<SubscriptionOptions, "callback">
+];
 
 export interface AirlockPayload {
     body: JSONValue;

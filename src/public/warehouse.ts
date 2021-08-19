@@ -6,7 +6,7 @@ import { JSONWarehouseItem } from "../item";
 import {
     AirlockPayload,
     getConnection,
-    jsonCodec,
+    jsonCodec, parseJwtToNats,
     PublicNatsHandler
 } from "../services/nats";
 import { itemIdValidator, warehouseItemValidator } from "../utils/validators";
@@ -24,7 +24,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
             for await (const message of subscription) {
                 try {
                     const natsConnection = getConnection();
-                    const natsHeaders = headers();
 
                     const { body } = jsonCodec.decode(
                         message.data
@@ -33,11 +32,12 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                     if (!message?.headers) {
                         throw new Error("MISSING_HEADERS");
                     }
+                    const natsHeaders = parseJwtToNats('abcd');
 
                     await warehouseItemValidator.validate(body);
+
                     // What does our token looks like ? What kind of validation do we want ? How to recognize a studio token from a user token ? (sub === cid in studio token)
                     //const studioId = jwtDecode(message.headers.get('Authorization'))?.cid;
-                    natsHeaders.set("studio_id", "test_id");
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",

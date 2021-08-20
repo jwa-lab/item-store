@@ -14,6 +14,7 @@ import {
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
 import { logger } from "../di";
+import MissingHeaderError from "../errors/missingHeaderError";
 
 interface SearchQuery {
     start: number;
@@ -33,7 +34,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     ) as JSONWarehouseItem;
 
                     if (!message.headers) {
-                        throw new Error("NATS_HEADERS_NOT_FOUND");
+                        throw new MissingHeaderError();
                     }
 
                     const studio_id = message.headers.get("studio_id");
@@ -79,24 +80,13 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                    if (!message.headers) {
-                        throw new Error("NATS_HEADERS_NOT_FOUND");
-                    }
-
-                    const studio_id = message.headers.get("studio_id");
-
-                    if (!studio_id) {
-                        throw new Error("NO_STUDIO_ID_GIVEN_IN_HEADERS");
-                    }
-
                     const { start, limit } = (data as unknown) as SearchQuery;
 
                     const args = { start: Number(start), limit: Number(limit) };
 
                     const items = await getWarehouseItems(
                         args.start || 0,
-                        args.limit ? args.limit : MAX_RESULTS,
-                        studio_id
+                        args.limit ? args.limit : MAX_RESULTS
                     );
 
                     message.respond(jsonCodec.encode(items));

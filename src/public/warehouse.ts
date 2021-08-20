@@ -4,7 +4,8 @@ import * as yup from "yup";
 import { SERVICE_NAME } from "../config";
 import { JSONWarehouseItem } from "../item";
 import {
-    AirlockPayload, getAirlockAuthorization,
+    AirlockPayload,
+    getAirlockAuthorization,
     getConnection,
     jsonCodec,
     parseJwtToNats,
@@ -39,13 +40,18 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         getAirlockAuthorization(message.headers)
                     );
 
+                    if (natsHeaders.get("is_studio") !== "true") {
+                        throw new Error("INVALID_JWT_STUDIO");
+                    }
+
                     await warehouseItemValidator.validate(body);
 
                     const response = await natsConnection.request(
                         "item-store.add_warehouse_item",
                         jsonCodec.encode(body),
                         {
-                            timeout: 1000, // PR Comment only: timeout is required in request options object, no default value var found in Nats for timeout.
+                            // PR Comment only: timeout is required in request options object, no default value var found in Nats for timeout.
+                            timeout: 1000,
                             headers: natsHeaders
                         }
                     );
@@ -75,14 +81,6 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
                         message.data
                     ) as AirlockPayload;
 
-                    if (!message?.headers) {
-                        throw new MissingHeaderError();
-                    }
-
-                    const natsHeaders = parseJwtToNats(
-                        getAirlockAuthorization(message.headers)
-                    );
-
                     await yup
                         .object({
                             start: yup
@@ -104,8 +102,7 @@ export const itemPublicHandlers: PublicNatsHandler[] = [
 
                     const response = await natsConnection.request(
                         "item-store.get_warehouse_items",
-                        jsonCodec.encode(query),
-                        { timeout: 1000, headers: natsHeaders }
+                        jsonCodec.encode(query)
                     );
 
                     const items = jsonCodec.decode(

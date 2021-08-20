@@ -42,20 +42,23 @@ interface AirlockJWT {
     uid: string;
     cid: string;
     sub?: string;
+    studio?: boolean;
 }
 
 let natsConnection: NatsConnection;
 
 export function parseJwtToNats(jwt: string): MsgHdrs {
     if (!jwt) {
-        throw new Error("Invalid JWT");
+        throw new Error("INVALID_JWT");
     }
+
     const decoded = jwtDecode<AirlockJWT>(jwt.split(" ")[1]);
     const natsHeaders = headers();
 
     natsHeaders.set("studio_id", decoded?.cid || "");
     natsHeaders.set("user_id", decoded?.uid || "");
     natsHeaders.set("username", decoded?.sub || "");
+    natsHeaders.set("is_studio", (decoded?.studio || "").toString());
 
     return natsHeaders;
 }

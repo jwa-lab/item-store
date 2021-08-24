@@ -58,7 +58,7 @@ export function parseJwtToNats(jwt: string): MsgHdrs {
     natsHeaders.set("studio_id", decoded?.cid || "");
     natsHeaders.set("user_id", decoded?.uid || "");
     natsHeaders.set("username", decoded?.sub || "");
-    natsHeaders.set("is_studio", (decoded?.studio || "").toString());
+    natsHeaders.set("is_studio", String(decoded?.studio || ""));
 
     return natsHeaders;
 }

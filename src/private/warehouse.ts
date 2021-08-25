@@ -45,7 +45,10 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                     const newItemId = await addWarehouseItem({
                         ...item,
-                        studio_id
+                        metadata: {
+                            ...item.metadata,
+                            studio_id
+                        }
                     });
 
                     logger.info(

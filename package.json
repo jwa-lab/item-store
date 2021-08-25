@@ -43,7 +43,7 @@
         "yup": "^0.32.9"
     },
     "devDependencies": {
-        "@jwalab/minilab": "^0.0.12",
+        "@jwalab/minilab": "^0.0.13",
         "@tsconfig/node14": "^1.0.0",
         "@types/elasticsearch": "^5.0.37",
         "@typescript-eslint/eslint-plugin": "^4.15.0",

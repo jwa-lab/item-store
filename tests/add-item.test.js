@@ -30,6 +30,7 @@ describe("Given Item Store is connected to NATS", () => {
                     data: {
                         XP: "100"
                     },
+                    metadata: {},
                     total_quantity: 1000,
                     available_quantity: 1000
                 }),
@@ -56,10 +57,12 @@ describe("Given Item Store is connected to NATS", () => {
             it("Then returns the item", () => {
                 expect(jsonCodec.decode(response.data)).toEqual({
                     item_id: item_id,
-                    studio_id: STUDIO_ID,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "100"
+                    },
+                    metadata: {
+                        studio_id: STUDIO_ID
                     },
                     total_quantity: 1000,
                     available_quantity: 1000
@@ -75,9 +78,11 @@ describe("Given Item Store is connected to NATS", () => {
                         name: "Lionel Messi",
                         no_update_after: undefined,
                         item_id: item_id,
-                        studio_id: STUDIO_ID,
                         data: {
                             XP: "80"
+                        },
+                        metadata: {
+                            studio_id: STUDIO_ID
                         },
                         total_quantity: 1000,
                         available_quantity: 1000
@@ -104,10 +109,12 @@ describe("Given Item Store is connected to NATS", () => {
                 it("Then returns the updated item", () => {
                     expect(jsonCodec.decode(response.data)).toEqual({
                         item_id: item_id,
-                        studio_id: STUDIO_ID,
                         name: "Lionel Messi",
                         data: {
                             XP: "80"
+                        },
+                        metadata: {
+                            studio_id: STUDIO_ID
                         },
                         total_quantity: 1000,
                         available_quantity: 1000

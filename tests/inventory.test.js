@@ -32,6 +32,7 @@ describe("Given Inventory is connected to NATS", () => {
                     data: {
                         XP: "94"
                     },
+                    metadata: {},
                     total_quantity: 1,
                     available_quantity: 1
                 }),
@@ -72,10 +73,12 @@ describe("Given Inventory is connected to NATS", () => {
             it("Then has reduced the available quantity by 1", () => {
                 expect(warehouseItem).toEqual({
                     item_id: warehouseItemId,
-                    studio_id: STUDIO_ID,
                     name: "Christiano Ronaldo",
                     data: {
                         XP: "94"
+                    },
+                    metadata: {
+                        studio_id: STUDIO_ID
                     },
                     total_quantity: 1,
                     available_quantity: 0
@@ -234,6 +237,7 @@ describe("Given Inventory is connected to NATS", () => {
                     data: {
                         XP: "94"
                     },
+                    metadata: {},
                     total_quantity: 1,
                     available_quantity: 1
                 }),

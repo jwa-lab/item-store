@@ -123,7 +123,10 @@ describe("Given Inventory is connected to NATS", () => {
                     item_id: warehouseItemId,
                     user_id: "user_1",
                     instance_number: 1,
-                    data: {}
+                    data: {},
+                    metadata: {
+                        studio_id: STUDIO_ID
+                    }
                 });
             });
 
@@ -167,6 +170,9 @@ describe("Given Inventory is connected to NATS", () => {
                             instance_number: 1,
                             data: {
                                 CLUB: "Racing Club Strasbourg"
+                            },
+                            metadata: {
+                                studio_id: STUDIO_ID
                             }
                         });
                     });
@@ -211,6 +217,9 @@ describe("Given Inventory is connected to NATS", () => {
                             instance_number: 1,
                             data: {
                                 CLUB: "Racing Club Strasbourg"
+                            },
+                            metadata: {
+                                studio_id: STUDIO_ID
                             }
                         });
                     });
@@ -287,6 +296,9 @@ describe("Given Inventory is connected to NATS", () => {
                         user_id: documentId,
                         instance_number: 1,
                         data: {},
+                        metadata: {
+                            studio_id: STUDIO_ID
+                        },
                         inventory_item_id: inventoryItemId
                     }
                 ]

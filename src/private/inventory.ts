@@ -68,7 +68,10 @@ export const inventoryPrivateHandlers: PrivateNatsHandler[] = [
                             item_id,
                             user_id,
                             instance_number,
-                            data: {}
+                            data: {},
+                            metadata: {
+                                ...data.metadata
+                            }
                         });
 
                         logger.info(

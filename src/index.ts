@@ -1,3 +1,5 @@
+import { initPgSQL } from "./services/pgSQL";
+
 console.log("[ITEM-STORE] Starting item store...");
 
 import { INDEXES, SERVICE_NAME } from "./config";
@@ -27,6 +29,7 @@ async function start() {
     try {
         await initNats();
         initElasticSearch();
+        await initPgSQL();
         await initDocs();
 
         await ensureIndexExists(INDEXES.ADMIN);

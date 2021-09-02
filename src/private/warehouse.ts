@@ -14,6 +14,7 @@ import {
 } from "../services/warehouseItemStore";
 import { JSONWarehouseItem } from "../item";
 import { logger } from "../di";
+import { pgAddWarehouseItem, pgGetWarehouseItem, pgGetWarehouseItems } from "../services/pgSQL";
 
 interface SearchQuery {
     start: number;
@@ -33,6 +34,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                     ) as JSONWarehouseItem;
 
                     const newItemId = await addWarehouseItem(item);
+                    const pgSQLItemId = await pgAddWarehouseItem(item);
 
                     logger.info(
                         `Item added to ${INDEXES.WAREHOUSE} with id ${newItemId}`
@@ -73,6 +75,10 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
                         args.start || 0,
                         args.limit ? args.limit : MAX_RESULTS
                     );
+                    const pgItems = await pgGetWarehouseItems(
+                        args.start || 0,
+                        args.limit ? args.limit : MAX_RESULTS
+                    );
 
                     message.respond(jsonCodec.encode(items));
                 } catch (err) {
@@ -98,6 +104,7 @@ export const warehousePrivateHandlers: PrivateNatsHandler[] = [
 
                 try {
                     const item = await getWarehouseItem(item_id);
+                    const pgItem = await pgGetWarehouseItem(item_id);
 
                     message.respond(jsonCodec.encode(item));
                 } catch (err) {

@@ -1,5 +1,13 @@
 version: "3.8"
 services:
+    postgres:
+        image: "postgres"
+        environment:
+            - POSTGRES_USER=jwa
+            - POSTGRES_PASSWORD=jwalab
+            - POSTGRES_DB=item
+        ports:
+            - "5432:5432"
     # https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
@@ -8,7 +16,34 @@ services:
         ports:
             - 9200:9200
             - 9300:9300
-    kibana:
-        image: docker.elastic.co/kibana/kibana:7.9.2
+#    kibana:
+#        image: docker.elastic.co/kibana/kibana:7.9.2
+#        ports:
+#            - "5601:5601"
+    nats:
+        image: nats:latest
+        command: [ ]
         ports:
-            - "5601:5601"
+            - "4222:4222"
+            - "6222:6222"
+            - "8222:8222"
+    authorization-service:
+        image: jwalab/authorization-service:0.0.4
+        ports:
+            - "8999:8999"
+        environment:
+            - TOKEN_ISSUER=authorization-service
+        restart: always
+    airlock:
+        image: jwalab/airlock:0.0.8
+        ports:
+            - "8000:8000"
+        restart: always
+        environment:
+            - NATS_URL=nats://nats:4222
+            - SECURE=false
+            - AUTH_URL=authorization-service:8999
+            - AUTH_PROTOCOL=http
+        depends_on:
+            - nats
+            - authorization-service

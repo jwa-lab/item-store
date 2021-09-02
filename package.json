@@ -39,7 +39,9 @@
         "@elastic/elasticsearch": "^7.11.0",
         "nats": "^2.0.0-218",
         "winston": "^3.3.3",
-        "yup": "^0.32.9"
+        "yup": "^0.32.9",
+        "knex": "^0.95.10",
+        "pg": "^8.7.1"
     },
     "devDependencies": {
         "@jwalab/minilab": "^0.0.3",
